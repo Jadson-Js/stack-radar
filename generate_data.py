@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 generate_data.py
-Lê o analise_mercado_br_eua_v1.xlsx e gera data.json
+Lê o analise_mercado_br_eua_v2.xlsx e gera data.json
 para o dashboard index.html consumir dinamicamente.
 """
 import json
@@ -9,7 +9,7 @@ import re
 from collections import defaultdict
 import pandas as pd
 
-XLSX_PATH = "analise_mercado_br_eua_v1.xlsx"
+XLSX_PATH = "analise_mercado_br_eua_v2.xlsx"
 OUTPUT_PATH = "data.json"
 TOP_N = 15        # número de itens nos rankings
 TOP_CAT = 10      # itens por categoria

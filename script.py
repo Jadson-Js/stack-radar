@@ -20,8 +20,8 @@ load_dotenv()
 APP_ID  = os.getenv('APP_ID')
 APP_KEY = os.getenv('APP_KEY')
 
-DIAS_ATRAS        = 171
-PAGINAS_POR_BUSCA = 50
+DIAS_ATRAS        = 365
+PAGINAS_POR_BUSCA = 100
 MAX_WORKERS       = 2
 RETRY_ATTEMPTS    = 3
 RETRY_DELAY       = 5
