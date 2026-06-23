@@ -604,38 +604,107 @@
       }
 
       @media (max-width: 768px) {
-        header { padding: 0 1rem; }
-        .hero { padding: 2rem 1rem 1rem; }
-        .kpi-grid { padding: 0 1rem; gap: 0.75rem; grid-template-columns: 1fr 1fr; }
-        .section { padding: 0 1rem; margin-bottom: 2rem; }
-        .cat-right-col { gap: 2rem; }
-        .donut-wrap { flex-direction: column; }
-        .card { padding: 1rem; }
-        .chart-container { height: 300px; }
+        header {
+          padding: 0 1rem;
+        }
+        .hero {
+          padding: 2rem 1rem 1rem;
+        }
+        .kpi-grid {
+          padding: 0 1rem;
+          gap: 0.75rem;
+          grid-template-columns: 1fr 1fr;
+        }
+        .section {
+          padding: 0 1rem;
+          margin-bottom: 2rem;
+        }
+        .cat-right-col {
+          gap: 2rem;
+        }
+        .donut-wrap {
+          flex-direction: column;
+        }
+        .card {
+          padding: 1rem;
+        }
+        .chart-container {
+          height: 300px;
+        }
       }
 
       @media (max-width: 480px) {
-        .kpi-grid { grid-template-columns: 1fr; }
-        nav { flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
-        .tab { font-size: 0.75rem; padding: 0.4rem 0.6rem; }
-        .bar-item { grid-template-columns: minmax(0, 100px) 1fr auto; }
-        .remote-item { grid-template-columns: minmax(0, 100px) 1fr auto; }
-        .hero h1 { font-size: 1.8rem; }
-        .card { width: 100%; overflow: hidden; box-sizing: border-box; }
+        .kpi-grid {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+        .tab {
+          font-size: 0.75rem;
+          padding: 0.4rem 0.6rem;
+        }
+        .bar-item {
+          grid-template-columns: minmax(0, 100px) 1fr auto;
+        }
+        .remote-item {
+          grid-template-columns: minmax(0, 100px) 1fr auto;
+        }
+        .hero h1 {
+          font-size: 1.8rem;
+        }
+        .card {
+          width: 100%;
+          overflow: hidden;
+          box-sizing: border-box;
+        }
       }
 
       @media (max-width: 360px) {
-        .section { padding: 0 0.4rem; }
-        .kpi-grid { padding: 0 0.4rem; }
-        .card { padding: 0.6rem; }
-        .bar-item { grid-template-columns: minmax(0, 35%) 1fr auto; gap: 0.3rem; font-size: 0.65rem; }
-        .bar-item .name { font-size: 0.65rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .bar-item .num { font-size: 0.65rem; }
-        .remote-item { grid-template-columns: minmax(0, 35%) 1fr auto; gap: 0.3rem; font-size: 0.65rem; }
-        .hero h1 { font-size: 1.4rem; }
-        .kpi { padding: 0.8rem; }
-        nav a { padding: 0.25rem 0.4rem; font-size: 0.7rem; }
-        .chart-container { height: 250px; }
+        .section {
+          padding: 0 0.4rem;
+        }
+        .kpi-grid {
+          padding: 0 0.4rem;
+        }
+        .card {
+          padding: 0.6rem;
+        }
+        .bar-item {
+          grid-template-columns: minmax(0, 35%) 1fr auto;
+          gap: 0.3rem;
+          font-size: 0.65rem;
+        }
+        .bar-item .name {
+          font-size: 0.65rem;
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .bar-item .num {
+          font-size: 0.65rem;
+        }
+        .remote-item {
+          grid-template-columns: minmax(0, 35%) 1fr auto;
+          gap: 0.3rem;
+          font-size: 0.65rem;
+        }
+        .hero h1 {
+          font-size: 1.4rem;
+        }
+        .kpi {
+          padding: 0.8rem;
+        }
+        nav a {
+          padding: 0.25rem 0.4rem;
+          font-size: 0.7rem;
+        }
+        .chart-container {
+          height: 250px;
+        }
       }
     </style>
   </head>
@@ -1068,10 +1137,10 @@
           setText("kpi-stack-eua", kpi.stackEUA);
           setText("kpi-stack-eua-sub", `${fmt(kpi.mencoesEUA)} menções no EUA`);
 
-          setText("header-periodo", "Últimos 171 dias");
+          setText("header-periodo", "01/01/2026 até 23/06/2026");
           setText(
             "footer-texto",
-            `Últimos 171 dias · ${fmt(kpi.totalGeral)} vagas analisadas no Brasil e EUA`,
+            `01/01/2026 até 23/06/2026 · ${fmt(kpi.totalGeral)} vagas analisadas no Brasil e EUA`,
           );
 
           // ── 1. Ranking Global ─────────────────────────────────────────────
