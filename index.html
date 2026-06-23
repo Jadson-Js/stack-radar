@@ -452,8 +452,6 @@
         flex-shrink: 0;
       }
 
-
-
       /* COMPARE TABLE */
       .cmp-table {
         width: 100%;
@@ -673,7 +671,6 @@
           <div class="kpi-sub" id="kpi-stack-eua-sub">—</div>
           <span class="kpi-icon">🚀</span>
         </div>
-
       </div>
 
       <!-- VISÃO GERAL -->
@@ -809,8 +806,6 @@
         </div>
       </div>
 
-
-
       <!-- CATEGORIAS -->
       <div class="section" id="categorias">
         <div class="section-title">Top Stacks por Categoria</div>
@@ -854,7 +849,7 @@
       </div>
     </main>
     <footer>
-      Stack Radar &copy; 2025 · Dados: Adzuna API ·
+      Stack Radar &copy; 2026 · Dados: Adzuna API ·
       <span id="footer-texto">Carregando dados...</span>
     </footer>
     <script>
@@ -908,7 +903,7 @@
         "Bancos de Dados",
         "DevOps & Cloud",
         "Dados & IA",
-        "Ferramentas & Práticas"
+        "Ferramentas & Práticas",
       ];
 
       // ── Utilitários ───────────────────────────────────────────────────────
@@ -1069,7 +1064,9 @@
           (() => {
             const el = document.getElementById("chart-cat-donut");
             if (!el) return;
-            const cats = CAT_ORDER.filter(c => D.catBR[c] !== undefined || D.catEUA[c] !== undefined);
+            const cats = CAT_ORDER.filter(
+              (c) => D.catBR[c] !== undefined || D.catEUA[c] !== undefined,
+            );
             const vals = cats.map(
               (c) => (D.catBR[c] || 0) + (D.catEUA[c] || 0),
             );
@@ -1408,12 +1405,12 @@
             });
           })();
 
-
-
           // ── 13. Tabs de Categoria ─────────────────────────────────────────
           let catChart = null;
           (() => {
-            const cats = CAT_ORDER.filter(c => D.porCategoria[c] !== undefined);
+            const cats = CAT_ORDER.filter(
+              (c) => D.porCategoria[c] !== undefined,
+            );
             const tabsEl = document.getElementById("tabs-cat");
             if (!tabsEl) return;
             tabsEl.innerHTML = cats
@@ -1526,7 +1523,7 @@
           (() => {
             const el = document.getElementById("chart-cat-country");
             if (!el) return;
-            const cats = CAT_ORDER.filter(c => D.catBR[c] !== undefined);
+            const cats = CAT_ORDER.filter((c) => D.catBR[c] !== undefined);
             new Chart(el, {
               type: "bar",
               data: {
