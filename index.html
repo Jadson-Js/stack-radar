@@ -215,9 +215,7 @@
       .kpi.total::before {
         background: linear-gradient(90deg, var(--accent), var(--accent2));
       }
-      .kpi.remote::before {
-        background: linear-gradient(90deg, var(--accent2), transparent);
-      }
+
       .kpi-label {
         font-size: 0.72rem;
         font-weight: 600;
@@ -454,42 +452,7 @@
         flex-shrink: 0;
       }
 
-      /* HEATMAP */
-      .heatmap-wrap {
-        overflow-x: auto;
-      }
-      .heatmap-table {
-        border-collapse: collapse;
-        width: 100%;
-        font-size: 0.72rem;
-        min-width: 600px;
-      }
-      .heatmap-table th {
-        padding: 0.4rem 0.6rem;
-        color: var(--text2);
-        font-weight: 600;
-        text-align: left;
-        white-space: nowrap;
-        border-bottom: 1px solid var(--border);
-      }
-      .heatmap-table td {
-        padding: 0.45rem 0.6rem;
-        border: 1px solid rgba(255, 255, 255, 0.03);
-        text-align: center;
-        font-weight: 600;
-        border-radius: 4px;
-        transition: transform 0.15s;
-      }
-      .heatmap-table td:first-child {
-        text-align: left;
-        color: var(--text2);
-        font-weight: 500;
-      }
-      .heatmap-table td:hover {
-        transform: scale(1.1);
-        z-index: 1;
-        position: relative;
-      }
+
 
       /* COMPARE TABLE */
       .cmp-table {
@@ -642,7 +605,7 @@
         </nav>
         <div class="header-meta">
           <div class="badge-live">Dados Reais</div>
-          <span>Últimos 180 dias</span>
+          <span id="header-periodo">Carregando...</span>
         </div>
       </div>
     </header>
@@ -660,52 +623,57 @@
       <div class="kpi-grid">
         <div class="kpi total">
           <div class="kpi-label">Total de Vagas</div>
-          <div class="kpi-value" id="kpi-total">10.376</div>
+          <div class="kpi-value" id="kpi-total">—</div>
           <div class="kpi-sub">BR + EUA combinados</div>
           <span class="kpi-icon">💼</span>
         </div>
         <div class="kpi br">
           <div class="kpi-label">🇧🇷 Brasil</div>
-          <div class="kpi-value">3.975</div>
-          <div class="kpi-sub">27,6% Sênior · 11,4% Estágio</div>
+          <div class="kpi-value" id="kpi-br">—</div>
+          <div class="kpi-sub" id="kpi-br-sub">—</div>
           <span class="kpi-icon">🇧🇷</span>
         </div>
         <div class="kpi eua">
           <div class="kpi-label">🇺🇸 EUA</div>
-          <div class="kpi-value">6.401</div>
-          <div class="kpi-sub">24,7% Sênior · 5,5% Estágio</div>
+          <div class="kpi-value" id="kpi-eua">—</div>
+          <div class="kpi-sub" id="kpi-eua-sub">—</div>
           <span class="kpi-icon">🇺🇸</span>
         </div>
         <div class="kpi remote">
           <div class="kpi-label">% Remoto BR</div>
-          <div class="kpi-value">12,3%</div>
-          <div class="kpi-sub">vs 14,6% nos EUA</div>
+          <div class="kpi-value" id="kpi-remoto-br">—</div>
+          <div class="kpi-sub" id="kpi-remoto-eua-sub">—</div>
           <span class="kpi-icon">🏠</span>
         </div>
         <div class="kpi total">
           <div class="kpi-label">#1 Stack Global</div>
-          <div class="kpi-value" style="font-size: 1.4rem">Java</div>
-          <div class="kpi-sub">794 menções combinadas</div>
-          <span class="kpi-icon">☕</span>
+          <div
+            class="kpi-value"
+            id="kpi-stack-global"
+            style="font-size: 1.4rem"
+          >
+            —
+          </div>
+          <div class="kpi-sub" id="kpi-stack-global-sub">—</div>
+          <span class="kpi-icon">🏆</span>
         </div>
         <div class="kpi br">
           <div class="kpi-label">#1 Stack Brasil</div>
-          <div class="kpi-value" style="font-size: 1.4rem">C/C++</div>
-          <div class="kpi-sub">438 menções no BR</div>
+          <div class="kpi-value" id="kpi-stack-br" style="font-size: 1.4rem">
+            —
+          </div>
+          <div class="kpi-sub" id="kpi-stack-br-sub">—</div>
           <span class="kpi-icon">⚡</span>
         </div>
         <div class="kpi eua">
           <div class="kpi-label">#1 Stack EUA</div>
-          <div class="kpi-value" style="font-size: 1.4rem">Agile</div>
-          <div class="kpi-sub">610 menções no EUA</div>
+          <div class="kpi-value" id="kpi-stack-eua" style="font-size: 1.4rem">
+            —
+          </div>
+          <div class="kpi-sub" id="kpi-stack-eua-sub">—</div>
           <span class="kpi-icon">🚀</span>
         </div>
-        <div class="kpi remote">
-          <div class="kpi-label">Mais Remota</div>
-          <div class="kpi-value" style="font-size: 1.4rem">React</div>
-          <div class="kpi-sub">29,7% das vagas = remoto</div>
-          <span class="kpi-icon">⚛️</span>
-        </div>
+
       </div>
 
       <!-- VISÃO GERAL -->
@@ -841,17 +809,7 @@
         </div>
       </div>
 
-      <!-- HEATMAP -->
-      <div class="section">
-        <div class="section-title">
-          Heatmap — Nível × Categoria (intensidade de demanda)
-        </div>
-        <div class="card">
-          <div class="heatmap-wrap">
-            <table class="heatmap-table" id="heatmap-table"></table>
-          </div>
-        </div>
-      </div>
+
 
       <!-- CATEGORIAS -->
       <div class="section" id="categorias">
@@ -896,659 +854,20 @@
       </div>
     </main>
     <footer>
-      Stack Radar &copy; 2025 · Dados: Adzuna API · Últimos 180 dias · 10.376
-      vagas analisadas no Brasil e EUA
+      Stack Radar &copy; 2025 · Dados: Adzuna API ·
+      <span id="footer-texto">Carregando dados...</span>
     </footer>
     <script>
       // ============================================================
-      // DATA — extraída do analise_mercado_br_eua.xlsx
+      // CARREGAMENTO DINÂMICO — data.json gerado por generate_data.py
       // ============================================================
-      const D = {
-        topGlobal: [
-          { t: "Java", v: 794 },
-          { t: "Agile", v: 636 },
-          { t: "React", v: 630 },
-          { t: "C/C++", v: 629 },
-          { t: "Machine Learning", v: 594 },
-          { t: "AWS", v: 536 },
-          { t: "Python", v: 477 },
-          { t: "SQL", v: 402 },
-          { t: ".NET", v: 395 },
-          { t: "Oracle", v: 338 },
-          { t: "Angular", v: 316 },
-          { t: "R", v: 311 },
-          { t: "CI/CD", v: 304 },
-          { t: "Azure", v: 283 },
-          { t: "JavaScript", v: 274 },
-          { t: "REST", v: 248 },
-          { t: "C#", v: 222 },
-          { t: "TypeScript", v: 208 },
-          { t: "iOS", v: 196 },
-          { t: "Segurança", v: 191 },
-        ],
-        topBR: [
-          { t: "C/C++", v: 438 },
-          { t: "Java", v: 413 },
-          { t: "React", v: 300 },
-          { t: ".NET", v: 249 },
-          { t: "SQL", v: 221 },
-          { t: "R", v: 208 },
-          { t: "Python", v: 195 },
-          { t: "Segurança", v: 191 },
-          { t: "Angular", v: 184 },
-          { t: "REST", v: 159 },
-          { t: "JavaScript", v: 145 },
-          { t: "C#", v: 136 },
-          { t: "TypeScript", v: 124 },
-          { t: "Node.js", v: 120 },
-          { t: "iOS", v: 110 },
-        ],
-        topEUA: [
-          { t: "Agile", v: 610 },
-          { t: "Machine Learning", v: 572 },
-          { t: "AWS", v: 437 },
-          { t: "Java", v: 381 },
-          { t: "React", v: 330 },
-          { t: "Oracle", v: 287 },
-          { t: "Python", v: 282 },
-          { t: "CI/CD", v: 244 },
-          { t: "Azure", v: 243 },
-          { t: "C/C++", v: 191 },
-          { t: "SQL", v: 181 },
-          { t: "Cybersecurity", v: 156 },
-          { t: ".NET", v: 146 },
-          { t: "Kubernetes", v: 137 },
-          { t: "Microservices", v: 135 },
-        ],
-        porNivel: {
-          Geral: [
-            { t: "Machine Learning", v: 371 },
-            { t: "Java", v: 345 },
-            { t: "AWS", v: 322 },
-            { t: "C/C++", v: 298 },
-            { t: "React", v: 283 },
-            { t: "Python", v: 266 },
-            { t: "Oracle", v: 245 },
-            { t: "SQL", v: 215 },
-            { t: "CI/CD", v: 171 },
-            { t: "Agile", v: 170 },
-          ],
-          Sênior: [
-            { t: "Agile", v: 386 },
-            { t: "Java", v: 308 },
-            { t: "React", v: 239 },
-            { t: "Machine Learning", v: 209 },
-            { t: "C/C++", v: 189 },
-            { t: "AWS", v: 172 },
-            { t: ".NET", v: 146 },
-            { t: "Python", v: 143 },
-            { t: "SQL", v: 113 },
-            { t: "R", v: 108 },
-          ],
-          Pleno: [
-            { t: "Java", v: 71 },
-            { t: "C/C++", v: 66 },
-            { t: ".NET", v: 55 },
-            { t: "React", v: 50 },
-            { t: "REST", v: 37 },
-            { t: "TypeScript", v: 35 },
-            { t: "Angular", v: 34 },
-            { t: "SQL", v: 30 },
-            { t: "Segurança", v: 28 },
-            { t: "R", v: 24 },
-          ],
-          Junior: [
-            { t: "Agile", v: 57 },
-            { t: "SQL", v: 23 },
-            { t: "Java", v: 22 },
-            { t: "C/C++", v: 21 },
-            { t: "React", v: 17 },
-            { t: "Python", v: 17 },
-            { t: "R", v: 12 },
-            { t: "RESTful", v: 11 },
-            { t: "JavaScript", v: 11 },
-            { t: "Angular", v: 10 },
-          ],
-          "Estágio/Intern": [
-            { t: "C/C++", v: 55 },
-            { t: "Java", v: 48 },
-            { t: "React", v: 41 },
-            { t: "Python", v: 29 },
-            { t: ".NET", v: 27 },
-            { t: "AWS", v: 22 },
-            { t: "SQL", v: 21 },
-            { t: "Node.js", v: 20 },
-            { t: "R", v: 19 },
-            { t: "PHP", v: 18 },
-          ],
-        },
-        porNivelBR: {
-          Geral: [
-            { t: "C", v: 414 },
-            { t: "Java", v: 303 },
-            { t: "React", v: 286 },
-            { t: "R", v: 244 },
-            { t: "SQL", v: 241 },
-            { t: "JavaScript", v: 229 },
-            { t: "Python", v: 196 },
-            { t: "Segurança", v: 193 },
-            { t: "REST", v: 165 },
-            { t: ".NET", v: 147 },
-          ],
-          Sênior: [
-            { t: "Java", v: 311 },
-            { t: "C", v: 251 },
-            { t: "React", v: 164 },
-            { t: ".NET", v: 149 },
-            { t: "Segurança", v: 126 },
-            { t: "Python", v: 121 },
-            { t: "R", v: 113 },
-            { t: "iOS", v: 103 },
-            { t: "SQL", v: 101 },
-            { t: "REST", v: 100 },
-          ],
-          Pleno: [
-            { t: "C", v: 160 },
-            { t: "Java", v: 135 },
-            { t: ".NET", v: 111 },
-            { t: "React", v: 89 },
-            { t: "REST", v: 71 },
-            { t: "Angular", v: 62 },
-            { t: "SQL", v: 62 },
-            { t: "C#", v: 60 },
-            { t: "Segurança", v: 57 },
-            { t: "Vue", v: 54 },
-          ],
-          Junior: [
-            { t: "C", v: 54 },
-            { t: "React", v: 37 },
-            { t: "SQL", v: 36 },
-            { t: "Java", v: 34 },
-            { t: "R", v: 31 },
-            { t: "Python", v: 25 },
-            { t: "Segurança", v: 23 },
-            { t: "JavaScript", v: 21 },
-            { t: "C#", v: 19 },
-            { t: "PHP", v: 18 },
-          ],
-          "Estágio/Intern": [
-            { t: "C", v: 123 },
-            { t: "Segurança", v: 78 },
-            { t: "R", v: 69 },
-            { t: "Java", v: 58 },
-            { t: "LLM", v: 44 },
-            { t: "LangChain", v: 44 },
-            { t: "Langchain", v: 44 },
-            { t: "React", v: 38 },
-            { t: "SQL", v: 36 },
-            { t: ".NET", v: 36 },
-          ],
-        },
-        porNivelEUA: {
-          Geral: [
-            { t: "Machine Learning", v: 1508 },
-            { t: "Oracle", v: 1139 },
-            { t: "Java", v: 876 },
-            { t: "AWS", v: 857 },
-            { t: "Python", v: 649 },
-            { t: "Agile", v: 588 },
-            { t: "CI/CD", v: 499 },
-            { t: "Azure", v: 480 },
-            { t: "C", v: 463 },
-            { t: "React", v: 424 },
-          ],
-          Sênior: [
-            { t: "Machine Learning", v: 1134 },
-            { t: "Oracle", v: 851 },
-            { t: "AWS", v: 826 },
-            { t: "Java", v: 750 },
-            { t: "Agile", v: 669 },
-            { t: "Azure", v: 469 },
-            { t: "React", v: 440 },
-            { t: "Python", v: 403 },
-            { t: "SQL", v: 366 },
-            { t: "C", v: 344 },
-          ],
-          Pleno: [
-            { t: "SQL", v: 32 },
-            { t: "Java", v: 31 },
-            { t: "CI/CD", v: 20 },
-            { t: "AWS", v: 19 },
-            { t: "Agile", v: 17 },
-            { t: "Python", v: 17 },
-            { t: "C", v: 11 },
-            { t: "Scrum", v: 10 },
-            { t: "Terraform", v: 9 },
-            { t: "Linux", v: 9 },
-          ],
-          Junior: [
-            { t: "Agile", v: 90 },
-            { t: "Cybersecurity", v: 56 },
-            { t: "LLM", v: 48 },
-            { t: "Java", v: 36 },
-            { t: "Machine Learning", v: 27 },
-            { t: "AWS", v: 27 },
-            { t: "CI/CD", v: 25 },
-            { t: "C", v: 22 },
-            { t: "Python", v: 18 },
-            { t: "React", v: 17 },
-          ],
-          "Estágio/Intern": [
-            { t: "Machine Learning", v: 57 },
-            { t: "Java", v: 57 },
-            { t: "Oracle", v: 55 },
-            { t: "C", v: 53 },
-            { t: ".NET", v: 41 },
-            { t: "React", v: 40 },
-            { t: "Azure", v: 38 },
-            { t: "Python", v: 36 },
-            { t: "AWS", v: 33 },
-            { t: "Agile", v: 29 },
-          ],
-        },
-        niveisVagasBR: {
-          Sênior: 1097,
-          Pleno: 467,
-          Geral: 1770,
-          Junior: 189,
-          "Estágio/Intern": 452,
-        },
-        niveisVagasEUA: {
-          Sênior: 1581,
-          Pleno: 0,
-          Geral: 4093,
-          Junior: 374,
-          "Estágio/Intern": 353,
-        },
-        modalBR: { remoto: 681, hibrido: 342, presencial: 4520 },
-        modalEUA: { remoto: 1134, hibrido: 651, presencial: 5865 },
-        catBR: {
-          Linguagens: 2205,
-          "Ferramentas & Práticas": 710,
-          "DevOps & Cloud": 373,
-          "Frameworks & Libs Backend": 893,
-          "Frameworks & Libs Web": 614,
-          "Dados & IA": 92,
-          Mobile: 390,
-          "Bancos de Dados": 266,
-        },
-        catEUA: {
-          Linguagens: 1655,
-          "Ferramentas & Práticas": 1431,
-          "DevOps & Cloud": 1620,
-          "Frameworks & Libs Backend": 736,
-          "Frameworks & Libs Web": 552,
-          "Dados & IA": 913,
-          Mobile: 331,
-          "Bancos de Dados": 412,
-        },
-        topRemote: [
-          { t: "Objective-C", pct: 63.6, n: 22 },
-          { t: "SwiftUI", pct: 62.5, n: 24 },
-          { t: "DynamoDB", pct: 45.5, n: 11 },
-          { t: "Scala", pct: 40.9, n: 22 },
-          { t: "Oracle", pct: 34.0, n: 338 },
-          { t: "OpenAI", pct: 30.0, n: 10 },
-          { t: "React", pct: 29.7, n: 630 },
-          { t: "Swift", pct: 28.0, n: 100 },
-          { t: "Spark", pct: 25.6, n: 43 },
-          { t: "Grafana", pct: 25.0, n: 12 },
-          { t: "RabbitMQ", pct: 25.0, n: 16 },
-          { t: "iOS", pct: 25.0, n: 196 },
-          { t: "Kafka", pct: 24.1, n: 58 },
-          { t: "Apache", pct: 23.1, n: 26 },
-        ],
-        heatmap: {
-          Geral: {
-            Linguagens: 1655,
-            "Ferramentas & Práticas": 710,
-            "DevOps & Cloud": 900,
-            "Frameworks & Libs Backend": 600,
-            "Frameworks & Libs Web": 540,
-            "Dados & IA": 460,
-            Mobile: 280,
-            "Bancos de Dados": 250,
-          },
-          Sênior: {
-            Linguagens: 920,
-            "Ferramentas & Práticas": 770,
-            "DevOps & Cloud": 580,
-            "Frameworks & Libs Backend": 420,
-            "Frameworks & Libs Web": 410,
-            "Dados & IA": 280,
-            Mobile: 190,
-            "Bancos de Dados": 160,
-          },
-          Pleno: {
-            Linguagens: 280,
-            "Ferramentas & Práticas": 120,
-            "DevOps & Cloud": 95,
-            "Frameworks & Libs Backend": 180,
-            "Frameworks & Libs Web": 120,
-            "Dados & IA": 30,
-            Mobile: 60,
-            "Bancos de Dados": 60,
-          },
-          Junior: {
-            Linguagens: 130,
-            "Ferramentas & Práticas": 90,
-            "DevOps & Cloud": 40,
-            "Frameworks & Libs Backend": 50,
-            "Frameworks & Libs Web": 60,
-            "Dados & IA": 15,
-            Mobile: 30,
-            "Bancos de Dados": 30,
-          },
-          "Estágio/Intern": {
-            Linguagens: 230,
-            "Ferramentas & Práticas": 80,
-            "DevOps & Cloud": 70,
-            "Frameworks & Libs Backend": 110,
-            "Frameworks & Libs Web": 120,
-            "Dados & IA": 30,
-            Mobile: 50,
-            "Bancos de Dados": 50,
-          },
-        },
-        porCategoria: {
-          Linguagens: [
-            { t: "Java", v: 794 },
-            { t: "C/C++", v: 629 },
-            { t: "Python", v: 477 },
-            { t: "SQL", v: 402 },
-            { t: "R", v: 311 },
-            { t: "JavaScript", v: 274 },
-            { t: "C#", v: 222 },
-            { t: "TypeScript", v: 208 },
-            { t: "PHP", v: 89 },
-            { t: "Kotlin", v: 72 },
-          ],
-          "Ferramentas & Práticas": [
-            { t: "Agile", v: 636 },
-            { t: "REST", v: 248 },
-            { t: "Segurança", v: 191 },
-            { t: "Git", v: 118 },
-            { t: "Scrum", v: 95 },
-            { t: "Microservices", v: 135 },
-            { t: "CI/CD", v: 80 },
-            { t: "Docker", v: 72 },
-            { t: "DDD", v: 45 },
-            { t: "TDD", v: 38 },
-          ],
-          "DevOps & Cloud": [
-            { t: "AWS", v: 536 },
-            { t: "CI/CD", v: 304 },
-            { t: "Azure", v: 283 },
-            { t: "Kubernetes", v: 137 },
-            { t: "Docker", v: 120 },
-            { t: "GCP", v: 85 },
-            { t: "Linux", v: 75 },
-            { t: "Terraform", v: 62 },
-            { t: "Jenkins", v: 48 },
-            { t: "Grafana", v: 32 },
-          ],
-          "Frameworks & Libs Backend": [
-            { t: "Spring Boot", v: 180 },
-            { t: "Node.js", v: 170 },
-            { t: ".NET", v: 395 },
-            { t: "Django", v: 90 },
-            { t: "FastAPI", v: 65 },
-            { t: "Laravel", v: 58 },
-            { t: "Express", v: 50 },
-            { t: "NestJS", v: 48 },
-            { t: "Flask", v: 42 },
-            { t: "Rails", v: 30 },
-          ],
-          "Frameworks & Libs Web": [
-            { t: "React", v: 630 },
-            { t: "Angular", v: 316 },
-            { t: "Vue.js", v: 85 },
-            { t: "Next.js", v: 70 },
-            { t: "TypeScript", v: 60 },
-            { t: "jQuery", v: 42 },
-            { t: "Tailwind", v: 38 },
-            { t: "Bootstrap", v: 35 },
-            { t: "Svelte", v: 20 },
-            { t: "Gatsby", v: 12 },
-          ],
-          "Dados & IA": [
-            { t: "Machine Learning", v: 594 },
-            { t: "Power BI", v: 95 },
-            { t: "TensorFlow", v: 80 },
-            { t: "Spark", v: 43 },
-            { t: "Databricks", v: 38 },
-            { t: "Tableau", v: 32 },
-            { t: "PyTorch", v: 30 },
-            { t: "Kafka", v: 58 },
-            { t: "Airflow", v: 28 },
-            { t: "Snowflake", v: 20 },
-          ],
-          Mobile: [
-            { t: "iOS", v: 196 },
-            { t: "Android", v: 120 },
-            { t: "React Native", v: 95 },
-            { t: "Flutter", v: 85 },
-            { t: "Swift", v: 100 },
-            { t: "Kotlin", v: 72 },
-            { t: "SwiftUI", v: 24 },
-            { t: "Expo", v: 18 },
-            { t: "Ionic", v: 12 },
-            { t: "Xamarin", v: 10 },
-          ],
-          "Bancos de Dados": [
-            { t: "Oracle", v: 338 },
-            { t: "SQL Server", v: 89 },
-            { t: "PostgreSQL", v: 80 },
-            { t: "MySQL", v: 79 },
-            { t: "MongoDB", v: 27 },
-            { t: "Redis", v: 21 },
-            { t: "Elasticsearch", v: 14 },
-            { t: "DynamoDB", v: 11 },
-            { t: "Cassandra", v: 8 },
-            { t: "Supabase", v: 6 },
-          ],
-        },
-        porCategoriaBR: {
-          Linguagens: [
-            { t: "C/C++", v: 438 },
-            { t: "Java", v: 280 },
-            { t: "SQL", v: 221 },
-            { t: "R", v: 208 },
-            { t: "Python", v: 195 },
-            { t: "JavaScript", v: 145 },
-            { t: "C#", v: 136 },
-            { t: "TypeScript", v: 124 },
-            { t: "PHP", v: 72 },
-            { t: "Kotlin", v: 48 },
-          ],
-          "Ferramentas & Práticas": [
-            { t: "REST", v: 159 },
-            { t: "Segurança", v: 191 },
-            { t: "Git", v: 95 },
-            { t: "Agile", v: 82 },
-            { t: "Scrum", v: 60 },
-            { t: "Microservices", v: 55 },
-            { t: "CI/CD", v: 42 },
-            { t: "Docker", v: 40 },
-            { t: "DDD", v: 28 },
-            { t: "TDD", v: 22 },
-          ],
-          "DevOps & Cloud": [
-            { t: "AWS", v: 99 },
-            { t: "Azure", v: 80 },
-            { t: "CI/CD", v: 70 },
-            { t: "Docker", v: 58 },
-            { t: "GCP", v: 38 },
-            { t: "Linux", v: 55 },
-            { t: "Kubernetes", v: 30 },
-            { t: "Terraform", v: 25 },
-            { t: "Jenkins", v: 32 },
-            { t: "Grafana", v: 12 },
-          ],
-          "Frameworks & Libs Backend": [
-            { t: ".NET", v: 249 },
-            { t: "Node.js", v: 120 },
-            { t: "Spring Boot", v: 98 },
-            { t: "Laravel", v: 52 },
-            { t: "Express", v: 40 },
-            { t: "NestJS", v: 38 },
-            { t: "Django", v: 30 },
-            { t: "Flask", v: 22 },
-            { t: "FastAPI", v: 18 },
-            { t: "Rails", v: 15 },
-          ],
-          "Frameworks & Libs Web": [
-            { t: "React", v: 300 },
-            { t: "Angular", v: 184 },
-            { t: "Vue.js", v: 48 },
-            { t: "TypeScript", v: 40 },
-            { t: "Next.js", v: 32 },
-            { t: "jQuery", v: 28 },
-            { t: "Tailwind", v: 22 },
-            { t: "Bootstrap", v: 25 },
-            { t: "Svelte", v: 10 },
-            { t: "Gatsby", v: 5 },
-          ],
-          "Dados & IA": [
-            { t: "R", v: 208 },
-            { t: "Power BI", v: 55 },
-            { t: "Python", v: 42 },
-            { t: "TensorFlow", v: 30 },
-            { t: "Spark", v: 18 },
-            { t: "Tableau", v: 12 },
-            { t: "Kafka", v: 20 },
-            { t: "PyTorch", v: 10 },
-            { t: "Airflow", v: 8 },
-            { t: "Databricks", v: 6 },
-          ],
-          Mobile: [
-            { t: "iOS", v: 110 },
-            { t: "Android", v: 75 },
-            { t: "React Native", v: 62 },
-            { t: "Flutter", v: 58 },
-            { t: "Swift", v: 55 },
-            { t: "Kotlin", v: 48 },
-            { t: "SwiftUI", v: 14 },
-            { t: "Expo", v: 12 },
-            { t: "Ionic", v: 8 },
-            { t: "Xamarin", v: 6 },
-          ],
-          "Bancos de Dados": [
-            { t: "Oracle", v: 51 },
-            { t: "SQL Server", v: 65 },
-            { t: "PostgreSQL", v: 58 },
-            { t: "MySQL", v: 62 },
-            { t: "MongoDB", v: 18 },
-            { t: "Redis", v: 14 },
-            { t: "Elasticsearch", v: 9 },
-            { t: "DynamoDB", v: 4 },
-            { t: "Cassandra", v: 5 },
-            { t: "Supabase", v: 4 },
-          ],
-        },
-        porCategoriaEUA: {
-          Linguagens: [
-            { t: "Java", v: 514 },
-            { t: "Python", v: 282 },
-            { t: "C/C++", v: 191 },
-            { t: "SQL", v: 181 },
-            { t: "JavaScript", v: 129 },
-            { t: "C#", v: 86 },
-            { t: "TypeScript", v: 84 },
-            { t: "R", v: 103 },
-            { t: "PHP", v: 17 },
-            { t: "Kotlin", v: 24 },
-          ],
-          "Ferramentas & Práticas": [
-            { t: "Agile", v: 610 },
-            { t: "Microservices", v: 135 },
-            { t: "REST", v: 89 },
-            { t: "CI/CD", v: 80 },
-            { t: "Git", v: 58 },
-            { t: "Scrum", v: 55 },
-            { t: "Segurança", v: 45 },
-            { t: "Docker", v: 38 },
-            { t: "DDD", v: 17 },
-            { t: "TDD", v: 16 },
-          ],
-          "DevOps & Cloud": [
-            { t: "AWS", v: 437 },
-            { t: "CI/CD", v: 244 },
-            { t: "Azure", v: 243 },
-            { t: "Kubernetes", v: 137 },
-            { t: "Docker", v: 120 },
-            { t: "GCP", v: 85 },
-            { t: "Linux", v: 55 },
-            { t: "Terraform", v: 62 },
-            { t: "Jenkins", v: 38 },
-            { t: "Grafana", v: 28 },
-          ],
-          "Frameworks & Libs Backend": [
-            { t: ".NET", v: 146 },
-            { t: "Node.js", v: 50 },
-            { t: "Spring Boot", v: 82 },
-            { t: "Django", v: 60 },
-            { t: "FastAPI", v: 47 },
-            { t: "Express", v: 30 },
-            { t: "NestJS", v: 24 },
-            { t: "Flask", v: 28 },
-            { t: "Rails", v: 18 },
-            { t: "Laravel", v: 6 },
-          ],
-          "Frameworks & Libs Web": [
-            { t: "React", v: 330 },
-            { t: "Angular", v: 132 },
-            { t: "Vue.js", v: 37 },
-            { t: "Next.js", v: 38 },
-            { t: "TypeScript", v: 35 },
-            { t: "jQuery", v: 22 },
-            { t: "Tailwind", v: 16 },
-            { t: "Bootstrap", v: 15 },
-            { t: "Svelte", v: 10 },
-            { t: "Gatsby", v: 7 },
-          ],
-          "Dados & IA": [
-            { t: "Machine Learning", v: 572 },
-            { t: "TensorFlow", v: 70 },
-            { t: "Power BI", v: 40 },
-            { t: "Spark", v: 43 },
-            { t: "Databricks", v: 38 },
-            { t: "Tableau", v: 32 },
-            { t: "PyTorch", v: 30 },
-            { t: "Kafka", v: 58 },
-            { t: "Airflow", v: 28 },
-            { t: "Snowflake", v: 20 },
-          ],
-          Mobile: [
-            { t: "iOS", v: 86 },
-            { t: "Android", v: 45 },
-            { t: "React Native", v: 33 },
-            { t: "Flutter", v: 27 },
-            { t: "Swift", v: 55 },
-            { t: "Kotlin", v: 24 },
-            { t: "SwiftUI", v: 18 },
-            { t: "Expo", v: 9 },
-            { t: "Ionic", v: 6 },
-            { t: "Xamarin", v: 4 },
-          ],
-          "Bancos de Dados": [
-            { t: "Oracle", v: 287 },
-            { t: "PostgreSQL", v: 55 },
-            { t: "SQL Server", v: 40 },
-            { t: "MySQL", v: 38 },
-            { t: "MongoDB", v: 18 },
-            { t: "Redis", v: 14 },
-            { t: "DynamoDB", v: 11 },
-            { t: "Elasticsearch", v: 8 },
-            { t: "Cassandra", v: 6 },
-            { t: "Supabase", v: 3 },
-          ],
-        },
-      };
 
-      // ============================================================
-      // PALETTE
-      // ============================================================
+      // Loading state nos KPIs
+      document.querySelectorAll(".kpi-value").forEach((el) => {
+        el.style.opacity = "0.3";
+      });
+
+      // ── Paletas (definidas globalmente pois não dependem dos dados) ──────
       const PALETTE = [
         "#6c63ff",
         "#00d4aa",
@@ -1581,17 +900,18 @@
         Mobile: "#ff6b6b",
         "Bancos de Dados": "#fb923c",
       };
-      const CAT_CHIPS = {
-        Linguagens: "chip-lang",
-        "Ferramentas & Práticas": "chip-tools",
-        "DevOps & Cloud": "chip-devops",
-        "Frameworks & Libs Backend": "chip-back",
-        "Frameworks & Libs Web": "chip-web",
-        "Dados & IA": "chip-data",
-        Mobile: "chip-mobile",
-        "Bancos de Dados": "chip-db",
-      };
+      const CAT_ORDER = [
+        "Linguagens",
+        "Frameworks & Libs Web",
+        "Frameworks & Libs Backend",
+        "Mobile",
+        "Bancos de Dados",
+        "DevOps & Cloud",
+        "Dados & IA",
+        "Ferramentas & Práticas"
+      ];
 
+      // ── Utilitários ───────────────────────────────────────────────────────
       function lerp(a, b, t) {
         return a + (b - a) * t;
       }
@@ -1606,22 +926,29 @@
         return v / max > 0.5 ? "#e2e8f0" : "#64748b";
       }
 
-      // ============================================================
-      // HELPERS
-      // ============================================================
+      function setText(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      }
+
       function makeBarList(containerId, data, color, maxV) {
         const el = document.getElementById(containerId);
         if (!el) return;
+        if (!data || data.length === 0) {
+          el.innerHTML =
+            '<div style="color:var(--text3);font-size:0.8rem">Sem dados</div>';
+          return;
+        }
         const mx = maxV || Math.max(...data.map((d) => d.v));
         el.innerHTML = data
           .slice(0, 15)
           .map(
             (d, i) => `
-    <div class="bar-item">
-      <div class="name" title="${d.t}"><span style="color:var(--text3);margin-right:4px;font-size:0.68rem">#${i + 1}</span>${d.t}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${((d.v / mx) * 100).toFixed(1)}%;background:${Array.isArray(color) ? color[i % color.length] : color}"></div></div>
-      <div class="num">${d.v}</div>
-    </div>`,
+  <div class="bar-item">
+    <div class="name" title="${d.t}"><span style="color:var(--text3);margin-right:4px;font-size:0.68rem">#${i + 1}</span>${d.t}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${((d.v / mx) * 100).toFixed(1)}%;background:${Array.isArray(color) ? color[i % color.length] : color}"></div></div>
+    <div class="num">${d.v}</div>
+  </div>`,
           )
           .join("");
       }
@@ -1633,7 +960,7 @@
         el.innerHTML = labels
           .map(
             (l, i) => `
-    <div class="legend-item"><div class="legend-dot" style="background:${colors[i]}"></div><span>${l}<br><strong>${values[i].toLocaleString("pt-BR")}</strong> (${((values[i] / total) * 100).toFixed(1)}%)</span></div>`,
+  <div class="legend-item"><div class="legend-dot" style="background:${colors[i]}"></div><span>${l}<br><strong>${values[i].toLocaleString("pt-BR")}</strong> (${((values[i] / total) * 100).toFixed(1)}%)</span></div>`,
           )
           .join("");
       }
@@ -1656,417 +983,56 @@
         };
       }
 
-      // ============================================================
-      // CHARTS
-      // ============================================================
-      // 1. Global ranking bars (Chart.js featured style)
-      (() => {
-        const el = document.getElementById("chart-global-rank");
-        if (!el) return;
-        const data = D.topGlobal.slice(0, 15);
-        new Chart(el, {
-          type: "bar",
-          data: {
-            labels: data.map((d) => d.t),
-            datasets: [
-              {
-                data: data.map((d) => d.v),
-                backgroundColor: data.map(
-                  (_, i) => PALETTE[i % PALETTE.length],
-                ),
-                borderRadius: 6,
-                borderSkipped: false,
-              },
-            ],
-          },
-          options: {
-            ...chartDefaults(),
-            maintainAspectRatio: false,
-            indexAxis: "y",
-            scales: {
-              x: {
-                ticks: { color: "#64748b" },
-                grid: { color: "rgba(255,255,255,0.04)" },
-              },
-              y: {
-                ticks: { color: "#94a3b8", font: { size: 11 } },
-                grid: { display: false },
-              },
-            },
-          },
-        });
-      })();
+      // ── Fetch e renderização ──────────────────────────────────────────────
+      fetch("data.json")
+        .then((r) => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        })
+        .then((D) => {
+          document
+            .querySelectorAll(".kpi-value")
+            .forEach((el) => (el.style.opacity = "1"));
 
-      // 2. Category donut
-      (() => {
-        const el = document.getElementById("chart-cat-donut");
-        if (!el) return;
-        const cats = Object.keys(D.catBR);
-        const vals = cats.map((c) => (D.catBR[c] || 0) + (D.catEUA[c] || 0));
-        const colors = cats.map((c) => CAT_COLORS[c] || "#666");
-        new Chart(el, {
-          type: "doughnut",
-          data: {
-            labels: cats,
-            datasets: [
-              {
-                data: vals,
-                backgroundColor: colors,
-                borderWidth: 2,
-                borderColor: "#0d0f1a",
-                hoverOffset: 8,
-              },
-            ],
-          },
-          options: {
-            ...chartDefaults(),
-            maintainAspectRatio: false,
-            cutout: "65%",
-            plugins: {
-              ...chartDefaults().plugins,
-              legend: {
-                display: true,
-                position: "bottom",
-                labels: {
-                  color: "#94a3b8",
-                  boxWidth: 10,
-                  padding: 10,
-                  font: { size: 11 },
-                },
-              },
-            },
-          },
-        });
-      })();
+          // ── KPIs ──────────────────────────────────────────────────────────
+          const fmt = (n) => n.toLocaleString("pt-BR");
+          const kpi = D.kpi;
 
-      // 3. Nível charts
-      let nivelChart = null;
-      function renderNivelChart(nivel) {
-        const data = D.porNivel[nivel];
-        const titleEl = document.getElementById("nivel-chart-title");
-        if (titleEl) {
-          titleEl.textContent = `🌐 Global (${nivel}) — BR + EUA`;
-        }
+          setText("kpi-total", fmt(kpi.totalGeral));
+          setText("kpi-br", fmt(kpi.totalBR));
+          setText(
+            "kpi-br-sub",
+            `${kpi.pctSeniorBR}% Sênior · ${kpi.pctEstagioBR}% Estágio`,
+          );
+          setText("kpi-eua", fmt(kpi.totalEUA));
+          setText(
+            "kpi-eua-sub",
+            `${kpi.pctSeniorEUA}% Sênior · ${kpi.pctEstagioEUA}% Estágio`,
+          );
+          setText("kpi-remoto-br", `${kpi.pctRemotoBR}%`);
+          setText("kpi-remoto-eua-sub", `vs ${kpi.pctRemotoEUA}% nos EUA`);
+          setText("kpi-stack-global", kpi.stackGlobal);
+          setText(
+            "kpi-stack-global-sub",
+            `${fmt(kpi.mencoesGlobal)} menções combinadas`,
+          );
+          setText("kpi-stack-br", kpi.stackBR);
+          setText("kpi-stack-br-sub", `${fmt(kpi.mencoesBR)} menções no BR`);
+          setText("kpi-stack-eua", kpi.stackEUA);
+          setText("kpi-stack-eua-sub", `${fmt(kpi.mencoesEUA)} menções no EUA`);
 
-        const chartEl = document.getElementById("chart-nivel");
-        if (chartEl) {
-          // Render Left Featured Chart using Chart.js
-          if (nivelChart) nivelChart.destroy();
-          nivelChart = new Chart(chartEl, {
-            type: "bar",
-            data: {
-              labels: data.map((d) => d.t),
-              datasets: [
-                {
-                  data: data.map((d) => d.v),
-                  backgroundColor: data.map(
-                    (_, i) => PALETTE[i % PALETTE.length],
-                  ),
-                  borderRadius: 6,
-                  borderSkipped: false,
-                },
-              ],
-            },
-            options: {
-              ...chartDefaults(),
-              indexAxis: "y",
-              scales: {
-                x: {
-                  ticks: { color: "#64748b" },
-                  grid: { color: "rgba(255,255,255,0.04)" },
-                },
-                y: {
-                  ticks: { color: "#94a3b8", font: { size: 11 } },
-                  grid: { display: false },
-                },
-              },
-            },
-          });
-        }
+          setText("header-periodo", "Últimos 171 dias");
+          setText(
+            "footer-texto",
+            `Últimos 171 dias · ${fmt(kpi.totalGeral)} vagas analisadas no Brasil e EUA`,
+          );
 
-        // Render Right Lists (Brasil & EUA)
-        makeBarList(
-          "nivel-rank-br",
-          (D.porNivelBR[nivel] || []).slice(0, 8),
-          "#6366f1",
-        );
-        makeBarList(
-          "nivel-rank-eua",
-          (D.porNivelEUA[nivel] || []).slice(0, 8),
-          "#06b6d4",
-        );
-      }
-
-      const tabsNivel = document.querySelectorAll("#tabs-nivel .tab");
-      if (tabsNivel.length > 0) {
-        renderNivelChart("Geral");
-        tabsNivel.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            tabsNivel.forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-            renderNivelChart(btn.dataset.nivel);
-          });
-        });
-      }
-
-      // 4. Nível distribution BR
-      (() => {
-        const el = document.getElementById("chart-nivel-br");
-        if (!el) return;
-        const labels = ["Geral", "Sênior", "Pleno", "Junior", "Estágio/Intern"];
-        const vals = labels.map((l) => D.niveisVagasBR[l] || 0);
-        const colors = ["#94a3b8", "#6c63ff", "#00d4aa", "#ff6b6b", "#a78bfa"];
-        new Chart(el, {
-          type: "bar",
-          data: {
-            labels,
-            datasets: [
-              {
-                data: vals,
-                backgroundColor: colors,
-                borderRadius: 6,
-                borderSkipped: false,
-              },
-            ],
-          },
-          options: {
-            ...chartDefaults(),
-            scales: {
-              x: {
-                ticks: { color: "#64748b", font: { size: 10 } },
-                grid: { color: "rgba(255,255,255,0.04)" },
-              },
-              y: {
-                ticks: { color: "#64748b" },
-                grid: { color: "rgba(255,255,255,0.04)" },
-              },
-            },
-          },
-        });
-      })();
-
-      // 5. Nível distribution EUA
-      (() => {
-        const el = document.getElementById("chart-nivel-eua");
-        if (!el) return;
-        const labels = ["Geral", "Sênior", "Pleno", "Junior", "Estágio/Intern"];
-        const vals = labels.map((l) => D.niveisVagasEUA[l] || 0);
-        const colors = ["#94a3b8", "#06b6d4", "#00d4aa", "#ff6b6b", "#a78bfa"];
-        new Chart(el, {
-          type: "bar",
-          data: {
-            labels,
-            datasets: [
-              {
-                data: vals,
-                backgroundColor: colors,
-                borderRadius: 6,
-                borderSkipped: false,
-              },
-            ],
-          },
-          options: {
-            ...chartDefaults(),
-            scales: {
-              x: {
-                ticks: { color: "#64748b", font: { size: 10 } },
-                grid: { color: "rgba(255,255,255,0.04)" },
-              },
-              y: {
-                ticks: { color: "#64748b" },
-                grid: { color: "rgba(255,255,255,0.04)" },
-              },
-            },
-          },
-        });
-      })();
-
-      // 6. Modalidade donut BR
-      (() => {
-        const el = document.getElementById("chart-modal-br");
-        if (!el) return;
-        const labels = ["Presencial", "Remoto", "Híbrido"];
-        const vals = [
-          D.modalBR.presencial,
-          D.modalBR.remoto,
-          D.modalBR.hibrido,
-        ];
-        const colors = ["#6366f1", "#00d4aa", "#ffd166"];
-        new Chart(el, {
-          type: "doughnut",
-          data: {
-            labels,
-            datasets: [
-              {
-                data: vals,
-                backgroundColor: colors,
-                borderWidth: 2,
-                borderColor: "#131629",
-                hoverOffset: 6,
-              },
-            ],
-          },
-          options: { ...chartDefaults(), cutout: "62%" },
-        });
-        makeLegend("legend-modal-br", labels, colors, vals);
-      })();
-
-      // 7. Modalidade donut EUA
-      (() => {
-        const el = document.getElementById("chart-modal-eua");
-        if (!el) return;
-        const labels = ["Presencial", "Remoto", "Híbrido"];
-        const vals = [
-          D.modalEUA.presencial,
-          D.modalEUA.remoto,
-          D.modalEUA.hibrido,
-        ];
-        const colors = ["#06b6d4", "#00d4aa", "#ffd166"];
-        new Chart(el, {
-          type: "doughnut",
-          data: {
-            labels,
-            datasets: [
-              {
-                data: vals,
-                backgroundColor: colors,
-                borderWidth: 2,
-                borderColor: "#131629",
-                hoverOffset: 6,
-              },
-            ],
-          },
-          options: { ...chartDefaults(), cutout: "62%" },
-        });
-        makeLegend("legend-modal-eua", labels, colors, vals);
-      })();
-
-      // 8. Remote rank list
-      (() => {
-        const el = document.getElementById("remote-rank");
-        if (!el) return;
-        el.innerHTML = D.topRemote
-          .slice(0, 10)
-          .map(
-            (d, i) => `
-    <div class="remote-item">
-      <div class="name">${d.t}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${d.pct}%;background:linear-gradient(90deg,#00d4aa,#6c63ff)"></div></div>
-      <div class="num">${d.pct}%</div>
-    </div>`,
-          )
-          .join("");
-      })();
-
-      // 9. BR rank
-      makeBarList("chart-br-rank", D.topBR, "#6366f1");
-      // 10. EUA rank
-      makeBarList("chart-eua-rank", D.topEUA, "#06b6d4");
-
-      // 11. Compare bar chart
-      (() => {
-        const el = document.getElementById("chart-compare");
-        if (!el) return;
-        const shared = D.topBR.slice(0, 10).map((d) => d.t);
-        const brVals = shared.map((t) => {
-          const f = D.topBR.find((d) => d.t === t);
-          return f ? f.v : 0;
-        });
-        const euaVals = shared.map((t) => {
-          const f = D.topEUA.find((d) => d.t === t);
-          return f ? f.v : 0;
-        });
-        new Chart(el, {
-          type: "bar",
-          data: {
-            labels: shared,
-            datasets: [
-              {
-                label: "🇧🇷 Brasil",
-                data: brVals,
-                backgroundColor: "rgba(99,102,241,0.8)",
-                borderRadius: 4,
-                borderSkipped: false,
-              },
-              {
-                label: "🇺🇸 EUA",
-                data: euaVals,
-                backgroundColor: "rgba(6,182,212,0.8)",
-                borderRadius: 4,
-                borderSkipped: false,
-              },
-            ],
-          },
-          options: {
-            ...chartDefaults(),
-            scales: {
-              x: {
-                ticks: { color: "#64748b", font: { size: 11 } },
-                grid: { color: "rgba(255,255,255,0.04)" },
-              },
-              y: {
-                ticks: { color: "#64748b" },
-                grid: { color: "rgba(255,255,255,0.04)" },
-              },
-            },
-            plugins: {
-              ...chartDefaults().plugins,
-              legend: {
-                display: true,
-                labels: { color: "#94a3b8", boxWidth: 12, padding: 16 },
-              },
-            },
-          },
-        });
-      })();
-
-      // 12. Heatmap
-      (() => {
-        const tbl = document.getElementById("heatmap-table");
-        if (!tbl) return;
-        const niveis = ["Geral", "Sênior", "Pleno", "Junior", "Estágio/Intern"];
-        const cats = Object.keys(D.catBR);
-        const allVals = niveis.flatMap((n) =>
-          cats.map((c) => D.heatmap[n][c] || 0),
-        );
-        const maxV = Math.max(...allVals);
-        tbl.innerHTML =
-          `<tr><th>Nível</th>${cats.map((c) => `<th>${c}</th>`).join("")}</tr>` +
-          niveis
-            .map(
-              (n) =>
-                `<tr><td>${n}</td>${cats
-                  .map((c) => {
-                    const v = D.heatmap[n][c] || 0;
-                    return `<td style="background:${heatColor(v, maxV)};color:${heatTextColor(v, maxV)}">${v > 0 ? v : "-"}</td>`;
-                  })
-                  .join("")}</tr>`,
-            )
-            .join("");
-      })();
-
-      // 13. Category tabs + charts (Global = Chart.js, BR/EUA = bar-list)
-      let catChart = null;
-      (() => {
-        const cats = Object.keys(D.porCategoria);
-        const tabsEl = document.getElementById("tabs-cat");
-        if (!tabsEl) return;
-        tabsEl.innerHTML = cats
-          .map(
-            (c, i) =>
-              `<button class="tab${i === 0 ? " active" : ""}" data-cat="${c}">${c.replace("Frameworks & Libs ", "FW ")}</button>`,
-          )
-          .join("");
-
-        function renderCat(cat) {
-          const color = CAT_COLORS[cat] || "#6c63ff";
-          const data = D.porCategoria[cat];
-
-          const chartEl = document.getElementById("chart-cat");
-          if (chartEl) {
-            // Render Left Featured Chart using Chart.js
-            if (catChart) catChart.destroy();
-            catChart = new Chart(chartEl, {
+          // ── 1. Ranking Global ─────────────────────────────────────────────
+          (() => {
+            const el = document.getElementById("chart-global-rank");
+            if (!el) return;
+            const data = (D.topGlobal || []).slice(0, 15);
+            new Chart(el, {
               type: "bar",
               data: {
                 labels: data.map((d) => d.t),
@@ -2083,6 +1049,7 @@
               },
               options: {
                 ...chartDefaults(),
+                maintainAspectRatio: false,
                 indexAxis: "y",
                 scales: {
                   x: {
@@ -2096,125 +1063,529 @@
                 },
               },
             });
+          })();
+
+          // ── 2. Donut Categorias ───────────────────────────────────────────
+          (() => {
+            const el = document.getElementById("chart-cat-donut");
+            if (!el) return;
+            const cats = CAT_ORDER.filter(c => D.catBR[c] !== undefined || D.catEUA[c] !== undefined);
+            const vals = cats.map(
+              (c) => (D.catBR[c] || 0) + (D.catEUA[c] || 0),
+            );
+            const colors = cats.map((c) => CAT_COLORS[c] || "#666");
+            new Chart(el, {
+              type: "doughnut",
+              data: {
+                labels: cats,
+                datasets: [
+                  {
+                    data: vals,
+                    backgroundColor: colors,
+                    borderWidth: 2,
+                    borderColor: "#0d0f1a",
+                    hoverOffset: 8,
+                  },
+                ],
+              },
+              options: {
+                ...chartDefaults(),
+                maintainAspectRatio: false,
+                cutout: "65%",
+                plugins: {
+                  ...chartDefaults().plugins,
+                  legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                      color: "#94a3b8",
+                      boxWidth: 10,
+                      padding: 10,
+                      font: { size: 11 },
+                    },
+                  },
+                },
+              },
+            });
+          })();
+
+          // ── 3. Stacks por Nível ───────────────────────────────────────────
+          let nivelChart = null;
+          function renderNivelChart(nivel) {
+            const data = (D.porNivel || {})[nivel] || [];
+            const titleEl = document.getElementById("nivel-chart-title");
+            if (titleEl)
+              titleEl.textContent = `🌐 Global (${nivel}) — BR + EUA`;
+            const chartEl = document.getElementById("chart-nivel");
+            if (chartEl) {
+              if (nivelChart) nivelChart.destroy();
+              nivelChart = new Chart(chartEl, {
+                type: "bar",
+                data: {
+                  labels: data.map((d) => d.t),
+                  datasets: [
+                    {
+                      data: data.map((d) => d.v),
+                      backgroundColor: data.map(
+                        (_, i) => PALETTE[i % PALETTE.length],
+                      ),
+                      borderRadius: 6,
+                      borderSkipped: false,
+                    },
+                  ],
+                },
+                options: {
+                  ...chartDefaults(),
+                  indexAxis: "y",
+                  scales: {
+                    x: {
+                      ticks: { color: "#64748b" },
+                      grid: { color: "rgba(255,255,255,0.04)" },
+                    },
+                    y: {
+                      ticks: { color: "#94a3b8", font: { size: 11 } },
+                      grid: { display: false },
+                    },
+                  },
+                },
+              });
+            }
+            makeBarList(
+              "nivel-rank-br",
+              ((D.porNivelBR || {})[nivel] || []).slice(0, 8),
+              "#6366f1",
+            );
+            makeBarList(
+              "nivel-rank-eua",
+              ((D.porNivelEUA || {})[nivel] || []).slice(0, 8),
+              "#06b6d4",
+            );
           }
 
-          // Render Right Lists
-          makeBarList(
-            "cat-rank-br",
-            (D.porCategoriaBR[cat] || []).slice(0, 8),
-            color,
-          );
-          makeBarList(
-            "cat-rank-eua",
-            (D.porCategoriaEUA[cat] || []).slice(0, 8),
-            color,
-          );
-        }
+          const tabsNivel = document.querySelectorAll("#tabs-nivel .tab");
+          if (tabsNivel.length > 0) {
+            renderNivelChart("Geral");
+            tabsNivel.forEach((btn) => {
+              btn.addEventListener("click", () => {
+                tabsNivel.forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                renderNivelChart(btn.dataset.nivel);
+              });
+            });
+          }
 
-        renderCat(cats[0]);
-        tabsEl.addEventListener("click", (e) => {
-          const btn = e.target.closest(".tab");
-          if (!btn) return;
-          tabsEl
-            .querySelectorAll(".tab")
-            .forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-          renderCat(btn.dataset.cat);
-        });
-      })();
+          // ── 4. Distribuição por Nível BR ──────────────────────────────────
+          (() => {
+            const el = document.getElementById("chart-nivel-br");
+            if (!el) return;
+            const labels = [
+              "Geral",
+              "Sênior",
+              "Pleno",
+              "Junior",
+              "Estágio/Intern",
+            ];
+            const vals = labels.map((l) => (D.niveisVagasBR || {})[l] || 0);
+            const colors = [
+              "#94a3b8",
+              "#6c63ff",
+              "#00d4aa",
+              "#ff6b6b",
+              "#a78bfa",
+            ];
+            new Chart(el, {
+              type: "bar",
+              data: {
+                labels,
+                datasets: [
+                  {
+                    data: vals,
+                    backgroundColor: colors,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                  },
+                ],
+              },
+              options: {
+                ...chartDefaults(),
+                scales: {
+                  x: {
+                    ticks: { color: "#64748b", font: { size: 10 } },
+                    grid: { color: "rgba(255,255,255,0.04)" },
+                  },
+                  y: {
+                    ticks: { color: "#64748b" },
+                    grid: { color: "rgba(255,255,255,0.04)" },
+                  },
+                },
+              },
+            });
+          })();
 
-      // 14. Remote bar chart
-      (() => {
-        const el = document.getElementById("chart-remote-bar");
-        if (!el) return;
-        const data = D.topRemote.slice(0, 12);
-        new Chart(el, {
-          type: "bar",
-          data: {
-            labels: data.map((d) => d.t),
-            datasets: [
-              {
-                data: data.map((d) => d.pct),
-                backgroundColor: data.map(
-                  (_, i) => PALETTE[i % PALETTE.length],
+          // ── 5. Distribuição por Nível EUA ─────────────────────────────────
+          (() => {
+            const el = document.getElementById("chart-nivel-eua");
+            if (!el) return;
+            const labels = [
+              "Geral",
+              "Sênior",
+              "Pleno",
+              "Junior",
+              "Estágio/Intern",
+            ];
+            const vals = labels.map((l) => (D.niveisVagasEUA || {})[l] || 0);
+            const colors = [
+              "#94a3b8",
+              "#06b6d4",
+              "#00d4aa",
+              "#ff6b6b",
+              "#a78bfa",
+            ];
+            new Chart(el, {
+              type: "bar",
+              data: {
+                labels,
+                datasets: [
+                  {
+                    data: vals,
+                    backgroundColor: colors,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                  },
+                ],
+              },
+              options: {
+                ...chartDefaults(),
+                scales: {
+                  x: {
+                    ticks: { color: "#64748b", font: { size: 10 } },
+                    grid: { color: "rgba(255,255,255,0.04)" },
+                  },
+                  y: {
+                    ticks: { color: "#64748b" },
+                    grid: { color: "rgba(255,255,255,0.04)" },
+                  },
+                },
+              },
+            });
+          })();
+
+          // ── 6. Donut Modalidade BR ────────────────────────────────────────
+          (() => {
+            const el = document.getElementById("chart-modal-br");
+            if (!el) return;
+            const labels = ["Presencial", "Remoto", "Híbrido"];
+            const vals = [
+              D.modalBR.presencial,
+              D.modalBR.remoto,
+              D.modalBR.hibrido,
+            ];
+            const colors = ["#6366f1", "#00d4aa", "#ffd166"];
+            new Chart(el, {
+              type: "doughnut",
+              data: {
+                labels,
+                datasets: [
+                  {
+                    data: vals,
+                    backgroundColor: colors,
+                    borderWidth: 2,
+                    borderColor: "#131629",
+                    hoverOffset: 6,
+                  },
+                ],
+              },
+              options: { ...chartDefaults(), cutout: "62%" },
+            });
+            makeLegend("legend-modal-br", labels, colors, vals);
+          })();
+
+          // ── 7. Donut Modalidade EUA ───────────────────────────────────────
+          (() => {
+            const el = document.getElementById("chart-modal-eua");
+            if (!el) return;
+            const labels = ["Presencial", "Remoto", "Híbrido"];
+            const vals = [
+              D.modalEUA.presencial,
+              D.modalEUA.remoto,
+              D.modalEUA.hibrido,
+            ];
+            const colors = ["#06b6d4", "#00d4aa", "#ffd166"];
+            new Chart(el, {
+              type: "doughnut",
+              data: {
+                labels,
+                datasets: [
+                  {
+                    data: vals,
+                    backgroundColor: colors,
+                    borderWidth: 2,
+                    borderColor: "#131629",
+                    hoverOffset: 6,
+                  },
+                ],
+              },
+              options: { ...chartDefaults(), cutout: "62%" },
+            });
+            makeLegend("legend-modal-eua", labels, colors, vals);
+          })();
+
+          // ── 8. Lista Stacks Mais Remotas ──────────────────────────────────
+          (() => {
+            const el = document.getElementById("remote-rank");
+            if (!el) return;
+            el.innerHTML = (D.topRemote || [])
+              .slice(0, 10)
+              .map(
+                (d) => `
+  <div class="remote-item">
+    <div class="name">${d.t}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${Math.min(d.pct, 100)}%;background:linear-gradient(90deg,#00d4aa,#6c63ff)"></div></div>
+    <div class="num">${d.pct}%</div>
+  </div>`,
+              )
+              .join("");
+          })();
+
+          // ── 9 & 10. Rankings Top BR e EUA ────────────────────────────────
+          makeBarList("chart-br-rank", D.topBR || [], "#6366f1");
+          makeBarList("chart-eua-rank", D.topEUA || [], "#06b6d4");
+
+          // ── 11. Comparativo BR vs EUA ─────────────────────────────────────
+          (() => {
+            const el = document.getElementById("chart-compare");
+            if (!el) return;
+            const shared = (D.topBR || []).slice(0, 10).map((d) => d.t);
+            const brVals = shared.map((t) => {
+              const f = (D.topBR || []).find((d) => d.t === t);
+              return f ? f.v : 0;
+            });
+            const euaVals = shared.map((t) => {
+              const f = (D.topEUA || []).find((d) => d.t === t);
+              return f ? f.v : 0;
+            });
+            new Chart(el, {
+              type: "bar",
+              data: {
+                labels: shared,
+                datasets: [
+                  {
+                    label: "🇧🇷 Brasil",
+                    data: brVals,
+                    backgroundColor: "rgba(99,102,241,0.8)",
+                    borderRadius: 4,
+                    borderSkipped: false,
+                  },
+                  {
+                    label: "🇺🇸 EUA",
+                    data: euaVals,
+                    backgroundColor: "rgba(6,182,212,0.8)",
+                    borderRadius: 4,
+                    borderSkipped: false,
+                  },
+                ],
+              },
+              options: {
+                ...chartDefaults(),
+                scales: {
+                  x: {
+                    ticks: { color: "#64748b", font: { size: 11 } },
+                    grid: { color: "rgba(255,255,255,0.04)" },
+                  },
+                  y: {
+                    ticks: { color: "#64748b" },
+                    grid: { color: "rgba(255,255,255,0.04)" },
+                  },
+                },
+                plugins: {
+                  ...chartDefaults().plugins,
+                  legend: {
+                    display: true,
+                    labels: { color: "#94a3b8", boxWidth: 12, padding: 16 },
+                  },
+                },
+              },
+            });
+          })();
+
+
+
+          // ── 13. Tabs de Categoria ─────────────────────────────────────────
+          let catChart = null;
+          (() => {
+            const cats = CAT_ORDER.filter(c => D.porCategoria[c] !== undefined);
+            const tabsEl = document.getElementById("tabs-cat");
+            if (!tabsEl) return;
+            tabsEl.innerHTML = cats
+              .map(
+                (c, i) =>
+                  `<button class="tab${i === 0 ? " active" : ""}" data-cat="${c}">${c.replace("Frameworks & Libs ", "FW ")}</button>`,
+              )
+              .join("");
+
+            function renderCat(cat) {
+              const color = CAT_COLORS[cat] || "#6c63ff";
+              const data = (D.porCategoria || {})[cat] || [];
+              const chartEl = document.getElementById("chart-cat");
+              if (chartEl) {
+                if (catChart) catChart.destroy();
+                catChart = new Chart(chartEl, {
+                  type: "bar",
+                  data: {
+                    labels: data.map((d) => d.t),
+                    datasets: [
+                      {
+                        data: data.map((d) => d.v),
+                        backgroundColor: data.map(
+                          (_, i) => PALETTE[i % PALETTE.length],
+                        ),
+                        borderRadius: 6,
+                        borderSkipped: false,
+                      },
+                    ],
+                  },
+                  options: {
+                    ...chartDefaults(),
+                    indexAxis: "y",
+                    scales: {
+                      x: {
+                        ticks: { color: "#64748b" },
+                        grid: { color: "rgba(255,255,255,0.04)" },
+                      },
+                      y: {
+                        ticks: { color: "#94a3b8", font: { size: 11 } },
+                        grid: { display: false },
+                      },
+                    },
+                  },
+                });
+              }
+              makeBarList(
+                "cat-rank-br",
+                ((D.porCategoriaBR || {})[cat] || []).slice(0, 8),
+                color,
+              );
+              makeBarList(
+                "cat-rank-eua",
+                ((D.porCategoriaEUA || {})[cat] || []).slice(0, 8),
+                color,
+              );
+            }
+
+            if (cats.length > 0) renderCat(cats[0]);
+            tabsEl.addEventListener("click", (e) => {
+              const btn = e.target.closest(".tab");
+              if (!btn) return;
+              tabsEl
+                .querySelectorAll(".tab")
+                .forEach((b) => b.classList.remove("active"));
+              btn.classList.add("active");
+              renderCat(btn.dataset.cat);
+            });
+          })();
+
+          // ── 14. Barras Stacks Remotas ─────────────────────────────────────
+          (() => {
+            const el = document.getElementById("chart-remote-bar");
+            if (!el) return;
+            const data = (D.topRemote || []).slice(0, 12);
+            new Chart(el, {
+              type: "bar",
+              data: {
+                labels: data.map((d) => d.t),
+                datasets: [
+                  {
+                    data: data.map((d) => d.pct),
+                    backgroundColor: data.map(
+                      (_, i) => PALETTE[i % PALETTE.length],
+                    ),
+                    borderRadius: 6,
+                    borderSkipped: false,
+                  },
+                ],
+              },
+              options: {
+                ...chartDefaults(),
+                indexAxis: "y",
+                scales: {
+                  x: {
+                    ticks: { color: "#64748b", callback: (v) => v + "%" },
+                    grid: { color: "rgba(255,255,255,0.04)" },
+                    max: 100,
+                  },
+                  y: {
+                    ticks: { color: "#94a3b8", font: { size: 11 } },
+                    grid: { display: false },
+                  },
+                },
+              },
+            });
+          })();
+
+          // ── 15. Categorias por País (grouped) ─────────────────────────────
+          (() => {
+            const el = document.getElementById("chart-cat-country");
+            if (!el) return;
+            const cats = CAT_ORDER.filter(c => D.catBR[c] !== undefined);
+            new Chart(el, {
+              type: "bar",
+              data: {
+                labels: cats.map((c) =>
+                  c
+                    .replace("Frameworks & Libs ", "FW ")
+                    .replace("Ferramentas & Práticas", "Ferramentas")
+                    .replace("Bancos de Dados", "Bancos DB"),
                 ),
-                borderRadius: 6,
-                borderSkipped: false,
+                datasets: [
+                  {
+                    label: "🇧🇷 Brasil",
+                    data: cats.map((c) => D.catBR[c] || 0),
+                    backgroundColor: "rgba(99,102,241,0.8)",
+                    borderRadius: 4,
+                    borderSkipped: false,
+                  },
+                  {
+                    label: "🇺🇸 EUA",
+                    data: cats.map((c) => D.catEUA[c] || 0),
+                    backgroundColor: "rgba(6,182,212,0.8)",
+                    borderRadius: 4,
+                    borderSkipped: false,
+                  },
+                ],
               },
-            ],
-          },
-          options: {
-            ...chartDefaults(),
-            indexAxis: "y",
-            scales: {
-              x: {
-                ticks: { color: "#64748b", callback: (v) => v + "%" },
-                grid: { color: "rgba(255,255,255,0.04)" },
-                max: 70,
+              options: {
+                ...chartDefaults(),
+                indexAxis: "y",
+                scales: {
+                  x: {
+                    ticks: { color: "#64748b" },
+                    grid: { color: "rgba(255,255,255,0.04)" },
+                  },
+                  y: {
+                    ticks: { color: "#94a3b8", font: { size: 10 } },
+                    grid: { display: false },
+                  },
+                },
+                plugins: {
+                  ...chartDefaults().plugins,
+                  legend: {
+                    display: true,
+                    labels: { color: "#94a3b8", boxWidth: 12, padding: 12 },
+                  },
+                },
               },
-              y: {
-                ticks: { color: "#94a3b8", font: { size: 11 } },
-                grid: { display: false },
-              },
-            },
-          },
+            });
+          })();
+        })
+        .catch((err) => {
+          console.error("❌ Erro ao carregar data.json:", err);
+          document.querySelectorAll(".kpi-value").forEach((el) => {
+            el.style.opacity = "1";
+            el.textContent = "N/D";
+          });
+          setText("header-periodo", "Erro ao carregar dados");
+          setText("footer-texto", "⚠️ Execute: python3 generate_data.py");
         });
-      })();
-
-      // 15. Cat by country grouped bar
-      (() => {
-        const el = document.getElementById("chart-cat-country");
-        if (!el) return;
-        const cats = Object.keys(D.catBR);
-        new Chart(el, {
-          type: "bar",
-          data: {
-            labels: cats.map((c) =>
-              c
-                .replace("Frameworks & Libs ", "FW ")
-                .replace("Ferramentas & Práticas", "Ferramentas")
-                .replace("Bancos de Dados", "Bancos DB"),
-            ),
-            datasets: [
-              {
-                label: "🇧🇷 Brasil",
-                data: cats.map((c) => D.catBR[c] || 0),
-                backgroundColor: "rgba(99,102,241,0.8)",
-                borderRadius: 4,
-                borderSkipped: false,
-              },
-              {
-                label: "🇺🇸 EUA",
-                data: cats.map((c) => D.catEUA[c] || 0),
-                backgroundColor: "rgba(6,182,212,0.8)",
-                borderRadius: 4,
-                borderSkipped: false,
-              },
-            ],
-          },
-          options: {
-            ...chartDefaults(),
-            indexAxis: "y",
-            scales: {
-              x: {
-                ticks: { color: "#64748b" },
-                grid: { color: "rgba(255,255,255,0.04)" },
-              },
-              y: {
-                ticks: { color: "#94a3b8", font: { size: 10 } },
-                grid: { display: false },
-              },
-            },
-            plugins: {
-              ...chartDefaults().plugins,
-              legend: {
-                display: true,
-                labels: { color: "#94a3b8", boxWidth: 12, padding: 12 },
-              },
-            },
-          },
-        });
-      })();
     </script>
   </body>
 </html>
