@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import re
 import time
+import json # <-- Adicionado para lidar com o dump bruto
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from openpyxl import Workbook
@@ -24,12 +25,12 @@ DAYS_AGO       = 365
 MAX_WORKERS    = 2
 RETRY_ATTEMPTS = 3
 RETRY_DELAY    = 5
-JOB_LIMIT      = 150_000
+JOB_LIMIT      = 100_000
 
 # Safety locks for dynamic pagination
-MAX_PAGES_PER_TERM = 150  # Prevents infinite requests if anti-loop fails
-MAX_CONSECUTIVE_FAILURES = 3  # Tolerates up to 3 consecutive empty/failed pages
-MAX_CONSECUTIVE_SATURATION = 2 # Tolerates up to 2 full pages with 100% duplicate jobs
+MAX_PAGES_PER_TERM = 150  
+MAX_CONSECUTIVE_FAILURES = 3  
+MAX_CONSECUTIVE_SATURATION = 2 
 
 COUNTRIES: dict[str, dict] = {
     'br': {
@@ -61,8 +62,12 @@ COUNTRIES: dict[str, dict] = {
 # 2. Level Classification
 # ==========================================
 _SENIOR_RE = re.compile(
-    r's[eê]nior|sr\.?\s|pleno|mid[\s\-]?level|staff\s+engineer|lead\s+engineer|'
+    r's[eê]nior|sr\.?\s|staff\s+engineer|lead\s+engineer|'
     r'principal\s+engineer|architect|tech\s+lead|engineering\s+manager',
+    re.IGNORECASE
+)
+_MID_RE = re.compile(
+    r'pleno|mid[\s\-]?level',
     re.IGNORECASE
 )
 _JUNIOR_RE = re.compile(
@@ -82,9 +87,9 @@ def classify_level(text: str) -> str:
         return 'Internship'
     if _JUNIOR_RE.search(text):
         return 'Junior'
+    if _MID_RE.search(text):
+        return 'Mid-level'
     if _SENIOR_RE.search(text):
-        if re.search(r'pleno|mid[\s\-]?level', text, re.IGNORECASE):
-            return 'Mid-level'
         return 'Senior'
     return 'General'
 
@@ -96,8 +101,8 @@ CATEGORIES = {
         'JavaScript', 'Python', 'Java', 'C#', 'TypeScript', 'PHP', 'Ruby',
         'Golang', 'Go', 'Rust', 'Kotlin', 'Swift', 'C++', 'C', 'SQL', 'Dart',
         'Scala', 'R', 'COBOL', 'Perl', 'Elixir', 'Haskell', 'Lua', 'Shell',
-        'Bash', 'PowerShell', 'Groovy', 'Clojure', 'F#', 'Objective-C',
-        'Assembly', 'MATLAB', 'Julia',
+        'Bash', 'Shell Script', 'PowerShell', 'Groovy', 'Clojure', 'F#', 
+        'Objective-C', 'Assembly', 'MATLAB', 'Julia',
     ],
     'Web Frameworks & Libs': [
         'React', 'Angular', 'Vue.js', 'Vue', 'Next.js', 'Nuxt.js', 'Nuxt',
@@ -155,7 +160,6 @@ CATEGORIES = {
         'WebSockets', 'WebSocket', 'MQTT', 'RabbitMQ', 'ActiveMQ', 'SQS',
         'OAuth', 'JWT', 'OpenID', 'SAML', 'SSO',
         'OWASP', 'Cybersecurity', 'Segurança', 'Penetration Testing',
-        'Linux', 'Bash', 'Shell Script',
     ],
 }
 
@@ -188,11 +192,18 @@ REGEX_MAP: dict[str, re.Pattern] = {
 _REMOTE_RE = re.compile(r'remoto|home[\s\-]?office|remote|distributed|anywhere', re.IGNORECASE)
 _HYBRID_RE = re.compile(r'híbrido|híbrida|hybrid', re.IGNORECASE)
 
+def _work_model(text: str, loc: str) -> str:
+    if _REMOTE_RE.search(text) or 'remote' in loc:
+        return 'Remote'
+    if _HYBRID_RE.search(text):
+        return 'Hybrid'
+    return 'On-site'
+
 # ==========================================
 # 5. Defensive Search Engine
 # ==========================================
-def _fetch_page(country: str, term: str, page: int) -> list[dict] | None:
-    """Returns a list of jobs. Returns None ONLY if the request fails completely."""
+# Retorna agora uma tupla: (lista_de_resultados, json_completo_da_request)
+def _fetch_page(country: str, term: str, page: int) -> tuple[list[dict] | None, dict | None]:
     url = f"https://api.adzuna.com/v1/api/jobs/{country}/search/{page}"
     params = {
         'app_id': APP_ID, 'app_key': APP_KEY, 'what': term,
@@ -207,16 +218,21 @@ def _fetch_page(country: str, term: str, page: int) -> list[dict] | None:
                 time.sleep(wait)
                 continue
             resp.raise_for_status()
-            results = resp.json().get('results', [])
+            
+            raw_json = resp.json()
+            results = raw_json.get('results', [])
+            
             print(f"  * [{country.upper()}] '{term[:20]:<20}' p{page:>3} — {len(results)} jobs")
-            return results
+            return results, raw_json
+            
         except Exception as exc:
             print(f"  x [{country.upper()}] p{page:>3} — error: {exc}")
             if attempt < RETRY_ATTEMPTS:
                 time.sleep(RETRY_DELAY)
-    return None
+                
+    return None, None
 
-def get_country_jobs(country: str, terms: list[str], global_jobs: dict[str, dict]) -> dict[str, dict]:
+def get_country_jobs(country: str, terms: list[str], global_jobs: dict[str, dict], all_raw_logs: list, all_raw_requests: list) -> dict[str, dict]:
     country_jobs: dict[str, dict] = {}
 
     for term in terms:
@@ -228,11 +244,9 @@ def get_country_jobs(country: str, terms: list[str], global_jobs: dict[str, dict
         page = 1
         consecutive_failures = 0
         consecutive_saturation = 0
-        term_interrupted = False
 
         while page <= MAX_PAGES_PER_TERM:
             if len(global_jobs) >= JOB_LIMIT:
-                term_interrupted = True
                 break
 
             page_batch = list(range(page, page + MAX_WORKERS))
@@ -241,13 +255,18 @@ def get_country_jobs(country: str, terms: list[str], global_jobs: dict[str, dict
             with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
                 futures = {pool.submit(_fetch_page, country, term, p): p for p in page_batch}
                 for fut in as_completed(futures):
-                    batch_results[futures[fut]] = fut.result()
+                    # Desempacota a tupla com os resultados da API
+                    res, raw_json = fut.result()
+                    batch_results[futures[fut]] = res
+                    
+                    # Se tivermos um JSON válido, adicionamos ao nosso log de requisições
+                    if raw_json:
+                        all_raw_requests.append(raw_json)
 
             stop_term = False
             for p in page_batch:
                 results = batch_results.get(p)
 
-                # Handling 1: API Error (None) or actually empty page ([])
                 if not results: 
                     consecutive_failures += 1
                     if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
@@ -256,17 +275,41 @@ def get_country_jobs(country: str, terms: list[str], global_jobs: dict[str, dict
                         break
                     continue
                 else:
-                    consecutive_failures = 0 # Reset failure counter
+                    consecutive_failures = 0 
 
-                # Handling 2: Saturation and global duplicates
                 new_on_this_page = 0
                 for job in results:
                     jid = job.get('id') or job.get('redirect_url', '')
+                    
+                    title = job.get('title', '')
+                    desc = job.get('description', '') or ''
+                    text = f"{title} {desc}"
+                    
+                    level = classify_level(text)
+                    loc = job.get('location', {}).get('display_name', '').lower()
+                    model = _work_model(text, loc)
+                    
+                    matched_stacks = [STACK_ALIASES.get(s, s) for s, rx in REGEX_MAP.items() if rx.search(text)]
+                    
+                    # AQUI: Essa lista guarda TUDO antes do filtro de duplicadas.
+                    all_raw_logs.append({
+                        'ID': jid,
+                        'Search Term': term,
+                        'Job Title': title,
+                        'Country': COUNTRIES[country]['name'],
+                        'Level': level,
+                        'Model': model,
+                        'Mentioned Stacks': ", ".join(sorted(set(matched_stacks))),
+                        'Creation Date': job.get('created', ''),
+                        'Description': desc
+                    })
+
                     if jid:
                         if jid not in global_jobs:
+                            job['Extracted_Level'] = level
+                            job['Extracted_Model'] = model
                             global_jobs[jid] = job
                             new_on_this_page += 1
-                        # Add to country even if it's a global duplicate (e.g., BR and US sharing)
                         if jid not in country_jobs:
                             country_jobs[jid] = job
 
@@ -281,11 +324,11 @@ def get_country_jobs(country: str, terms: list[str], global_jobs: dict[str, dict
 
                 if len(global_jobs) >= JOB_LIMIT:
                     stop_term = True
-                    term_interrupted = True
                     break
 
-            if stop_term or term_interrupted:
+            if stop_term:
                 break
+                
             page += MAX_WORKERS
 
         if page > MAX_PAGES_PER_TERM:
@@ -298,13 +341,6 @@ def get_country_jobs(country: str, terms: list[str], global_jobs: dict[str, dict
 # ==========================================
 # 6. Processing
 # ==========================================
-def _work_model(text: str, loc: str) -> str:
-    if _REMOTE_RE.search(text) or 'remote' in loc:
-        return 'Remote'
-    if _HYBRID_RE.search(text):
-        return 'Hybrid'
-    return 'On-site'
-
 def process_country(country: str, jobs: dict[str, dict]) -> tuple[list[dict], dict[str, int]]:
     counts: dict[str, dict] = {
         level: defaultdict(lambda: {'Total': 0, 'Remote': 0, 'Hybrid': 0, 'On-site': 0})
@@ -316,10 +352,11 @@ def process_country(country: str, jobs: dict[str, dict]) -> tuple[list[dict], di
         title = job.get('title', '')
         description = job.get('description', '') or ''
         text = f"{title} {description}"
-        level = classify_level(text)
+        
+        level = job.get('Extracted_Level', classify_level(text))
+        model = job.get('Extracted_Model', _work_model(text, ''))
+        
         distribution[level] += 1
-        loc = job.get('location', {}).get('display_name', '').lower()
-        model = _work_model(text, loc)
 
         for stack, rx in REGEX_MAP.items():
             if rx.search(text):
@@ -407,22 +444,28 @@ def _create_country_sheet(wb: Workbook, df_country: pd.DataFrame, country_name: 
     ws.row_dimensions[2].height = 22
 
     df_sorted = df_country.sort_values(['Level', 'Category', 'Total'], ascending=[True, True, False])
+    df_sorted['Rank'] = df_sorted.groupby(['Level', 'Category']).cumcount() + 1
+    
     row_idx = 3
     for _, row in df_sorted.iterrows():
         alt = (row_idx % 2 == 0)
-        vals = [row['Level'], row['Category'], row['Technology'], row['Total'], row['Remote'], row['Hybrid'], row['On-site'], row['% Remote'], '']
+        vals = [
+            row['Level'], row['Category'], row['Technology'], 
+            row['Total'], row['Remote'], row['Hybrid'], 
+            row['On-site'], row['% Remote'], f"#{row['Rank']}"
+        ]
+        
         for col, val in enumerate(vals, 1):
             cell = ws.cell(row=row_idx, column=col, value=val)
             _data_style(cell, alt=alt, align='left' if col in (1, 2, 3) else 'center')
-            if col == 1: cell.font = Font(name='Arial', size=9, bold=True, color=LEVEL_COLORS.get(row['Level'], 'FF555555'))
-            if col == 8: cell.number_format = '0.0"%"'
-        row_idx += 1
-
-    row_idx = 3
-    for _, row in df_sorted.iterrows():
-        subset = df_sorted[(df_sorted['Level'] == row['Level']) & (df_sorted['Category'] == row['Category'])]
-        rank = list(subset['Technology']).index(row['Technology']) + 1
-        _data_style(ws.cell(row=row_idx, column=9, value=f"#{rank}"), alt=(row_idx % 2 == 0))
+            
+            if col == 1: 
+                cell.font = Font(name='Arial', size=9, bold=True, color=LEVEL_COLORS.get(row['Level'], 'FF555555'))
+            if col == 8: 
+                cell.number_format = '0.0"%"'
+            if col == 9:
+                cell.font = Font(name='Arial', size=9, bold=False)
+                
         row_idx += 1
 
     if row_idx > 3:
@@ -564,6 +607,10 @@ def analyze_job_market() -> None:
     all_data: list[dict] = []
     distribution_by_country: dict[str, dict] = {}
     global_jobs: dict[str, dict] = {}
+    
+    # Listas para guardar logs e requests
+    all_raw_logs: list[dict] = [] 
+    all_raw_requests: list[dict] = [] # <-- AQUI: guarda os retornos brutos JSON
 
     for country, cfg in COUNTRIES.items():
         if len(global_jobs) >= JOB_LIMIT:
@@ -571,7 +618,10 @@ def analyze_job_market() -> None:
             break
 
         print(f"\n\n{'─'*60}\nCollecting jobs: {cfg['name']} ({country.upper()})\nGlobal jobs: {len(global_jobs):,} / {JOB_LIMIT:,}\n{'─'*60}")
-        country_jobs = get_country_jobs(country, cfg['terms'], global_jobs)
+        
+        # Passando as duas listas
+        country_jobs = get_country_jobs(country, cfg['terms'], global_jobs, all_raw_logs, all_raw_requests)
+        
         data, distribution = process_country(country, country_jobs)
         all_data.extend(data)
         distribution_by_country[cfg['name']] = distribution
@@ -581,16 +631,28 @@ def analyze_job_market() -> None:
         for level, qty in sorted(distribution.items(), key=lambda x: -x[1]):
             print(f"   {level:<20} {qty:>6,} jobs ({(qty/total*100 if total else 0):.1f}%)")
 
-    print(f"\n{'='*60}\nTotal globally collected: {len(global_jobs):,} unique jobs\n{'='*60}")
+    print(f"\n{'='*60}\nTotal globally collected: {len(global_jobs):,} unique jobs")
+    print(f"Total raw hits (including duplicates): {len(all_raw_logs):,}\n{'='*60}")
 
     df = pd.DataFrame(all_data)
     if df.empty:
         print("\nNo data found.")
         return
 
+    # Exportar os dados processados para Excel
     for cfg in COUNTRIES.values():
         print_report(df, cfg['name'])
     export_to_excel(df, 'market_analysis_br_usa.xlsx', distribution_by_country)
+
+    # Exportar CSV de auditoria com TODOS os dados tratados, incluindo duplicadas
+    df_csv = pd.DataFrame(all_raw_logs)
+    df_csv.to_csv('all_hits_raw_dump.csv', index=False, encoding='utf-8-sig')
+    print("\n[+] Raw absolute data successfully exported to CSV: all_hits_raw_dump.csv")
+
+    # AQUI: Exportar o arquivo JSON de cache das chamadas puras da API
+    with open('raw_api_responses.json', 'w', encoding='utf-8') as f:
+        json.dump({"requests": all_raw_requests}, f, ensure_ascii=False, indent=2)
+    print("[+] Raw API JSON responses exported to: raw_api_responses.json")
 
 if __name__ == "__main__":
     analyze_job_market()

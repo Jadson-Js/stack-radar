@@ -1,27 +1,30 @@
 #!/usr/bin/env python3
 """
 generate_data.py
-Lê o analise_mercado_br_eua_v2.xlsx e gera data.json
+Lê o market_analysis_br_usa.xlsx e gera data.json
 para o dashboard index.html consumir dinamicamente.
 """
 import json
 import re
-from collections import defaultdict
 import pandas as pd
 
-XLSX_PATH = "analise_mercado_br_eua_v4.xlsx"
+XLSX_PATH = "market_analysis_br_usa.xlsx"
 OUTPUT_PATH = "data.json"
 TOP_N = 15        # número de itens nos rankings
 TOP_CAT = 10      # itens por categoria
-NIVEIS = ["Geral", "Sênior", "Pleno", "Junior", "Estágio/Intern"]
+LEVELS = ["General", "Senior", "Mid-level", "Junior", "Internship"]
 
 # ── helpers ────────────────────────────────────────────────────────────────
-def read_sheet(xl: pd.ExcelFile, sheet: str, skip_rows: int = 1) -> pd.DataFrame:
-    """Lê uma aba pulando a primeira linha (título mesclado) e renomeia colunas."""
-    df = xl.parse(sheet, skiprows=skip_rows)
-    # A primeira linha real de dados vira o header
-    df.columns = [str(c).strip() for c in df.iloc[0]]
-    df = df.iloc[1:].reset_index(drop=True)
+def read_sheet(xl: pd.ExcelFile, sheet: str) -> pd.DataFrame:
+    """Lê a aba definindo a linha 1 (segunda linha) como o cabeçalho real."""
+    # header=1 diz para o pandas usar a segunda linha do Excel (índice 1) como colunas,
+    # ignorando automaticamente a primeira linha mesclada de título.
+    df = xl.parse(sheet, header=1)
+    
+    # Remove colunas fantasmas geradas por células vazias no Excel (ex: Unnamed: 9)
+    df = df.loc[:, ~df.columns.str.contains('^Unnamed:', na=True)]
+    df.columns = [str(c).strip() for c in df.columns]
+    
     # Remover linhas totalmente nulas
     df = df.dropna(how="all")
     return df
@@ -43,6 +46,8 @@ def safe_float(v):
 
 def top_list(df: pd.DataFrame, col_tech: str, col_val: str, n: int) -> list[dict]:
     """Retorna lista [{t, v}, ...] ordenada por col_val descendente."""
+    if df.empty:
+        return []
     out = (
         df.groupby(col_tech)[col_val]
         .sum()
@@ -56,237 +61,242 @@ def top_list(df: pd.DataFrame, col_tech: str, col_val: str, n: int) -> list[dict
 def main():
     xl = pd.ExcelFile(XLSX_PATH)
 
-    # === Aba "Todos os Dados" ===
-    all_df = read_sheet(xl, "Todos os Dados")
-    all_df.columns = ["País", "Nível", "Categoria", "Tecnologia",
-                      "Total", "Remoto", "Híbrido", "Presencial", "% Remoto"]
-    for col in ["Total", "Remoto", "Híbrido", "Presencial"]:
-        all_df[col] = all_df[col].apply(safe_int)
-    all_df["% Remoto"] = all_df["% Remoto"].apply(safe_float)
+    # === Aba "Todos os Dados" / "All Data" ===
+    sheet_name = "All Data" if "All Data" in xl.sheet_names else xl.sheet_names[0]
+    all_df = read_sheet(xl, sheet_name)
+    
+    # Dicionário de normalização de colunas (Mantendo tudo em Inglês)
+    col_map = {
+        "Country": "Country", "País": "Country",
+        "Level": "Level", "Nível": "Level",
+        "Category": "Category", "Categoria": "Category",
+        "Technology": "Technology", "Tecnologia": "Technology",
+        "Total": "Total",
+        "Remote": "Remote", "Remoto": "Remote",
+        "Hybrid": "Hybrid", "Híbrido": "Hybrid",
+        "On-site": "On-site", "Presencial": "On-site",
+        "% Remote": "% Remote", "% Remoto": "% Remote"
+    }
+    all_df = all_df.rename(columns=col_map)
+    
+    # Sanitização contra espaços invisíveis que quebram as Categorias e Níveis
+    for col in ["Country", "Level", "Category", "Technology"]:
+        if col in all_df.columns:
+            all_df[col] = all_df[col].astype(str).str.strip()
 
-    br_df  = all_df[all_df["País"] == "Brasil"].copy()
-    eua_df = all_df[all_df["País"] == "EUA"].copy()
+    for col in ["Total", "Remote", "Hybrid", "On-site"]:
+        if col in all_df.columns:
+            all_df[col] = all_df[col].apply(safe_int)
+            
+    if "% Remote" in all_df.columns:
+        all_df["% Remote"] = all_df["% Remote"].apply(safe_float)
 
-    # ── KPIs ──────────────────────────────────────────────────────────────
-    total_br  = safe_int(br_df["Total"].sum())
-    total_eua = safe_int(eua_df["Total"].sum())
+    # Normalizar valores internos das células de português para inglês
+    country_map = {"Brasil": "Brazil", "Brazil": "Brazil", "USA": "USA", "EUA": "USA"}
+    level_map = {
+        "General": "General", "Senior": "Senior", "Mid-level": "Mid-level",
+        "Junior": "Junior", "Internship": "Internship",
+        "Geral": "General", "Sênior": "Senior", "Pleno": "Mid-level",
+        "Estágio/Intern": "Internship", "Estágio": "Internship"
+    }
+    all_df["Country"] = all_df["Country"].map(lambda x: country_map.get(x, x))
+    all_df["Level"] = all_df["Level"].map(lambda x: level_map.get(x, x))
 
-    # Distribuição de modalidade: soma por país (evita double-count por nível)
-    # Usamos a aba Geral para modalidade para não duplicar
+    br_df  = all_df[all_df["Country"] == "Brazil"].copy()
+    usa_df = all_df[all_df["Country"] == "USA"].copy()
+
+    # ── KPIs de Modalidade (Filtra estritamente por Nível Geral/General para evitar double-count) ──
     def modal_pais(df: pd.DataFrame) -> dict:
-        g = df.groupby("Nível")[["Remoto", "Híbrido", "Presencial"]].sum()
-        # Soma de todos os níveis gera duplicatas por tecnologia contada em
-        # vários níveis; usamos nível "Geral" como proxy de modalidade total.
-        geral = g.loc["Geral"] if "Geral" in g.index else g.sum()
+        sub_general = df[df["Level"] == "General"]
+        if sub_general.empty:
+            return {"remote": 0, "hybrid": 0, "onsite": 0}
         return {
-            "remoto":     safe_int(geral["Remoto"]),
-            "hibrido":    safe_int(geral["Híbrido"]),
-            "presencial": safe_int(geral["Presencial"]),
+            "remote":     safe_int(sub_general["Remote"].sum()),
+            "hybrid":    safe_int(sub_general["Hybrid"].sum()),
+            "onsite": safe_int(sub_general["On-site"].sum()),
         }
 
     modal_br  = modal_pais(br_df)
-    modal_eua = modal_pais(eua_df)
+    modal_usa = modal_pais(usa_df)
 
     total_modal_br  = sum(modal_br.values())  or 1
-    total_modal_eua = sum(modal_eua.values()) or 1
-    pct_remoto_br   = round(modal_br["remoto"]  / total_modal_br  * 100, 1)
-    pct_remoto_eua  = round(modal_eua["remoto"] / total_modal_eua * 100, 1)
+    total_modal_usa = sum(modal_usa.values()) or 1
+    pct_remote_br   = round(modal_br["remote"]  / total_modal_br  * 100, 1)
+    pct_remote_usa  = round(modal_usa["remote"] / total_modal_usa * 100, 1)
 
-    # ── Top global (BR + EUA combinados, nível Geral para não duplicar) ──
-    geral_all = all_df[all_df["Nível"] == "Geral"].groupby("Tecnologia")["Total"].sum()
-    top_global = (
-        geral_all.sort_values(ascending=False).head(TOP_N)
-    )
+    # ── Rankings Globais ──
+    general_all = all_df[all_df["Level"] == "General"].groupby("Technology")["Total"].sum()
+    top_global = general_all.sort_values(ascending=False).head(TOP_N)
     top_global_list = [{"t": t, "v": safe_int(v)} for t, v in top_global.items()]
 
-    top_br_list  = top_list(br_df[br_df["Nível"] == "Geral"],  "Tecnologia", "Total", TOP_N)
-    top_eua_list = top_list(eua_df[eua_df["Nível"] == "Geral"], "Tecnologia", "Total", TOP_N)
+    top_br_list  = top_list(br_df[br_df["Level"] == "General"],  "Technology", "Total", TOP_N)
+    top_usa_list = top_list(usa_df[usa_df["Level"] == "General"], "Technology", "Total", TOP_N)
 
-    # #1 stacks
-    stack_global = top_global_list[0]["t"] if top_global_list else "-"
-    stack_br     = top_br_list[0]["t"]     if top_br_list     else "-"
-    stack_eua    = top_eua_list[0]["t"]    if top_eua_list    else "-"
-
+    # #1 Stacks e Menções
+    stack_global   = top_global_list[0]["t"] if top_global_list else "-"
     mencoes_global = top_global_list[0]["v"] if top_global_list else 0
+    stack_br       = top_br_list[0]["t"]     if top_br_list     else "-"
     mencoes_br     = top_br_list[0]["v"]     if top_br_list     else 0
-    mencoes_eua    = top_eua_list[0]["v"]    if top_eua_list    else 0
+    stack_usa      = top_usa_list[0]["t"]    if top_usa_list    else "-"
+    mencoes_usa    = top_usa_list[0]["v"]    if top_usa_list    else 0
 
-    # Stack mais remota (global, nível Geral, mínimo 5 ocorrências)
-    rem_df = all_df[all_df["Nível"] == "Geral"].groupby("Tecnologia").agg(
-        Total=("Total", "sum"), Remoto=("Remoto", "sum")
+    # Stack mais remota (Mínimo de 5 ocorrências)
+    rem_df = all_df[all_df["Level"] == "General"].groupby("Technology").agg(
+        Total=("Total", "sum"), Remote=("Remote", "sum")
     )
     rem_df = rem_df[rem_df["Total"] >= 5].copy()
-    rem_df["pct"] = (rem_df["Remoto"] / rem_df["Total"] * 100).round(1)
+    rem_df["pct"] = (rem_df["Remote"] / rem_df["Total"] * 100).round(1)
     top_remote_df = rem_df.sort_values("pct", ascending=False).head(14)
     top_remote = [
         {"t": t, "pct": row["pct"], "n": safe_int(row["Total"])}
         for t, row in top_remote_df.iterrows()
     ]
 
-
-    # ── Por nível (global, BR, EUA) ──────────────────────────────────────
+    # ── Rankings Por Nível ──
     def por_nivel_dict(df: pd.DataFrame) -> dict:
         result = {}
-        for nivel in NIVEIS:
-            sub = df[df["Nível"] == nivel]
-            result[nivel] = top_list(sub, "Tecnologia", "Total", TOP_CAT)
+        for level in LEVELS:
+            sub = df[df["Level"] == level]
+            result[level] = top_list(sub, "Technology", "Total", TOP_CAT)
         return result
 
-    por_nivel     = por_nivel_dict(all_df)
-    por_nivel_br  = por_nivel_dict(br_df)
-    por_nivel_eua = por_nivel_dict(eua_df)
+    by_level     = por_nivel_dict(all_df)
+    by_level_br  = por_nivel_dict(br_df)
+    by_level_usa = por_nivel_dict(usa_df)
 
-    # ── Distribuição de vagas por nível ──────────────────────────────────
-    def niveis_vagas(df: pd.DataFrame) -> dict:
-        """
-        Estimamos o total de vagas por nível usando a aba Resumo Executivo,
-        mas como é difícil de parsear, usamos a coluna Total da tecnologia
-        mais frequente por nível como proxy.
-        Em vez disso, somamos Total por tecnologia única no nível Geral de cada nível.
-        """
-        result = {}
-        for nivel in NIVEIS:
-            sub = df[df["Nível"] == nivel]
-            # Total de menções (soma de todas as tecnologias — não é único por vaga)
-            # Melhor: contar tecnologias distintas x média... mas sem a coluna de vagas reais
-            # Usamos o máximo individual de uma tecnologia como proxy de volume
-            result[nivel] = safe_int(sub["Total"].max()) if not sub.empty else 0
-        return result
-
-    # Lê do Resumo Executivo os valores reais de vagas por nível
-    resumo_df = xl.parse("Resumo Executivo", skiprows=1)
-    resumo_df.columns = [str(c).strip() for c in resumo_df.columns]
-
+    # ── Distribuição de Vagas por Nível (Resumo Executivo) ──
     def parse_resumo_niveis(xl: pd.ExcelFile) -> tuple[dict, dict]:
-        """Extrai distribuição de vagas por nível do Resumo Executivo."""
-        raw = xl.parse("Resumo Executivo", header=None)
-        niveis_br, niveis_eua = {}, {}
+        raw = xl.parse("Executive Summary", header=None)
+        niveis_br, niveis_usa = {}, {}
         pais_atual = None
+        
+        exec_level_map = {
+            "General": "General", "Senior": "Senior", "Mid-level": "Mid-level",
+            "Junior": "Junior", "Internship": "Internship",
+            "Geral": "General", "Sênior": "Senior", "Pleno": "Mid-level",
+            "Estágio/Intern": "Internship", "Estágio": "Internship"
+        }
+        
         for _, row in raw.iterrows():
             cell0 = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
             cell1 = row.iloc[1] if pd.notna(row.iloc[1]) else None
 
-            if "Brasil" in cell0:
+            if "brazil" in cell0.lower() or "brasil" in cell0.lower():
                 pais_atual = "br"
-            elif "EUA" in cell0:
-                pais_atual = "eua"
+                continue
+            elif "usa" in cell0.lower() or "eua" in cell0.lower():
+                pais_atual = "usa"
+                continue
 
-            for n in NIVEIS:
-                if cell0 == n and cell1 is not None:
-                    qtd = safe_int(cell1)
-                    if pais_atual == "br":
-                        niveis_br[n] = qtd
-                    elif pais_atual == "eua":
-                        niveis_eua[n] = qtd
-        return niveis_br, niveis_eua
+            mapped_n = exec_level_map.get(cell0)
+            if mapped_n is not None and cell1 is not None:
+                qtd = safe_int(cell1)
+                if pais_atual == "br":
+                    niveis_br[mapped_n] = qtd
+                elif pais_atual == "usa":
+                    niveis_usa[mapped_n] = qtd
+        return niveis_br, niveis_usa
 
-    niveis_vagas_br, niveis_vagas_eua = parse_resumo_niveis(xl)
+    niveis_vagas_br, niveis_vagas_usa = parse_resumo_niveis(xl)
 
-    # ── Categorias ────────────────────────────────────────────────────────
-    cats_br  = br_df[br_df["Nível"]  == "Geral"].groupby("Categoria")["Total"].sum().to_dict()
-    cats_eua = eua_df[eua_df["Nível"] == "Geral"].groupby("Categoria")["Total"].sum().to_dict()
+    # ── Agrupamento de Categorias Limpo ──
+    br_df_clean = br_df[~br_df["Category"].isin(["nan", "None", ""])]
+    usa_df_clean = usa_df[~usa_df["Category"].isin(["nan", "None", ""])]
+    all_df_clean = all_df[~all_df["Category"].isin(["nan", "None", ""])]
+
+    cats_br  = br_df_clean[br_df_clean["Level"] == "General"].groupby("Category")["Total"].sum().to_dict()
+    cats_usa = usa_df_clean[usa_df_clean["Level"] == "General"].groupby("Category")["Total"].sum().to_dict()
     cats_br  = {k: safe_int(v) for k, v in cats_br.items()}
-    cats_eua = {k: safe_int(v) for k, v in cats_eua.items()}
+    cats_usa = {k: safe_int(v) for k, v in cats_usa.items()}
 
-    # ── Por categoria (global, BR, EUA) ──────────────────────────────────
+    # ── Rankings Por Categoria ──
     def por_cat_dict(df: pd.DataFrame) -> dict:
-        cats = df["Categoria"].dropna().unique()
+        cats = df["Category"].dropna().unique()
         result = {}
         for cat in cats:
-            sub = df[df["Categoria"] == cat]
-            result[cat] = top_list(sub, "Tecnologia", "Total", TOP_CAT)
+            sub = df[df["Category"] == cat]
+            result[cat] = top_list(sub, "Technology", "Total", TOP_CAT)
         return result
 
-    por_cat     = por_cat_dict(all_df)
-    por_cat_br  = por_cat_dict(br_df)
-    por_cat_eua = por_cat_dict(eua_df)
+    by_cat     = por_cat_dict(all_df_clean)
+    by_cat_br  = por_cat_dict(br_df_clean)
+    by_cat_usa = por_cat_dict(usa_df_clean)
 
-
-
-    # ── Total de vagas reais (Resumo Executivo) ──────────────────────────
+    # ── Total de Vagas Reais do Mercado ──
     def parse_total_vagas(xl: pd.ExcelFile) -> tuple[int, int]:
-        raw = xl.parse("Resumo Executivo", header=None)
-        total_br, total_eua = 0, 0
+        raw = xl.parse("Executive Summary", header=None)
+        total_br, total_usa = 0, 0
         for _, row in raw.iterrows():
             cell = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
-            m = re.search(r"(\d[\d.]+)\s*vagas", cell)
+            m = re.search(r"([\d.,]+)\s*(?:vagas|collected jobs)", cell, re.IGNORECASE)
             if m:
-                n = safe_int(m.group(1).replace(".", ""))
-                if "Brasil" in cell:
+                n = safe_int(m.group(1).replace(".", "").replace(",", ""))
+                if "brazil" in cell.lower() or "brasil" in cell.lower():
                     total_br = n
-                elif "EUA" in cell:
-                    total_eua = n
-        return total_br, total_eua
+                elif "usa" in cell.lower() or "eua" in cell.lower():
+                    total_usa = n
+        return total_br, total_usa
 
-    real_total_br, real_total_eua = parse_total_vagas(xl)
-    if real_total_br == 0: real_total_br = total_br
-    if real_total_eua == 0: real_total_eua = total_eua
+    real_total_br, real_total_usa = parse_total_vagas(xl)
+    
+    # Fallback de segurança para evitar divisão por zero
+    if real_total_br == 0: 
+        real_total_br = safe_int(br_df[br_df["Level"] == "General"]["Total"].max()) or 1
+    if real_total_usa == 0: 
+        real_total_usa = safe_int(usa_df[usa_df["Level"] == "General"]["Total"].max()) or 1
 
-    # ── Percentual Sênior / Estágio para KPI sub ──────────────────────────
+    # ── Percentual de Sênior / Estágio ──
     def pct_nivel(niveis_dict: dict, nivel: str, total: int) -> float:
         return round(niveis_dict.get(nivel, 0) / total * 100, 1) if total else 0.0
 
-    pct_senior_br    = pct_nivel(niveis_vagas_br,  "Sênior",        real_total_br)
-    pct_estagio_br   = pct_nivel(niveis_vagas_br,  "Estágio/Intern", real_total_br)
-    pct_senior_eua   = pct_nivel(niveis_vagas_eua, "Sênior",        real_total_eua)
-    pct_estagio_eua  = pct_nivel(niveis_vagas_eua, "Estágio/Intern", real_total_eua)
+    pct_senior_br   = pct_nivel(niveis_vagas_br,  "Senior",      real_total_br)
+    pct_estagio_br  = pct_nivel(niveis_vagas_br,  "Internship",  real_total_br)
+    pct_senior_usa  = pct_nivel(niveis_vagas_usa, "Senior",      real_total_usa)
+    pct_estagio_usa = pct_nivel(niveis_vagas_usa, "Internship",  real_total_usa)
 
-    # ── Monta JSON final ──────────────────────────────────────────────────
+    # ── Monta o Payload do JSON final ──
     data = {
-        # KPIs
         "kpi": {
             "totalBR":         real_total_br,
-            "totalEUA":        real_total_eua,
-            "totalGeral":      real_total_br + real_total_eua,
-            "pctRemotoBR":     pct_remoto_br,
-            "pctRemotoEUA":    pct_remoto_eua,
+            "totalUSA":        real_total_usa,
+            "totalGlobal":     real_total_br + real_total_usa,
+            "pctRemoteBR":     pct_remote_br,
+            "pctRemoteUSA":    pct_remote_usa,
             "stackGlobal":     stack_global,
-            "mencoesGlobal":   mencoes_global,
+            "mentionsGlobal":   mencoes_global,
             "stackBR":         stack_br,
-            "mencoesBR":       mencoes_br,
-            "stackEUA":        stack_eua,
-            "mencoesEUA":      mencoes_eua,
-
+            "mentionsBR":       mencoes_br,
+            "stackUSA":        stack_usa,
+            "mentionsUSA":      mencoes_usa,
             "pctSeniorBR":     pct_senior_br,
-            "pctEstagioBR":    pct_estagio_br,
-            "pctSeniorEUA":    pct_senior_eua,
-            "pctEstagioEUA":   pct_estagio_eua,
+            "pctInternshipBR":    pct_estagio_br,
+            "pctSeniorUSA":    pct_senior_usa,
+            "pctInternshipUSA":   pct_estagio_usa,
         },
-        # Rankings globais
         "topGlobal": top_global_list,
         "topBR":     top_br_list,
-        "topEUA":    top_eua_list,
-        # Por nível
-        "porNivel":    por_nivel,
-        "porNivelBR":  por_nivel_br,
-        "porNivelEUA": por_nivel_eua,
-        # Distribuição de vagas por nível
-        "niveisVagasBR":  niveis_vagas_br,
-        "niveisVagasEUA": niveis_vagas_eua,
-        # Modalidade
-        "modalBR":  modal_br,
-        "modalEUA": modal_eua,
-        # Categorias
-        "catBR":  cats_br,
-        "catEUA": cats_eua,
-        # Top remoto
+        "topUSA":    top_usa_list,
+        "byLevel":    by_level,
+        "byLevelBR":  by_level_br,
+        "byLevelUSA": by_level_usa,
+        "levelsJobsBR":  niveis_vagas_br,
+        "levelsJobsUSA": niveis_vagas_usa,
+        "modalityBR":  modal_br,
+        "modalityUSA": modal_usa,
+        "categoryBR":  cats_br,
+        "categoryUSA": cats_usa,
         "topRemote": top_remote,
-
-        # Por categoria
-        "porCategoria":    por_cat,
-        "porCategoriaBR":  por_cat_br,
-        "porCategoriaEUA": por_cat_eua,
+        "byCategory":    by_cat,
+        "byCategoryBR":  by_cat_br,
+        "byCategoryUSA": by_cat_usa,
     }
 
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    print(f"✅  {OUTPUT_PATH} gerado com sucesso!")
-    print(f"   Total BR: {real_total_br:,} vagas | EUA: {real_total_eua:,} vagas")
-    print(f"   #1 Global: {stack_global} ({mencoes_global} menções)")
-    print(f"   #1 BR: {stack_br} | #1 EUA: {stack_eua}")
-
-
+    print(f"✅ {OUTPUT_PATH} gerado com sucesso!")
+    print(f"   Categorias ativas mapeadas no JSON -> BR: {len(cats_br)} | USA: {len(cats_usa)}")
+    print(f"   Total Real das Vagas -> BR: {real_total_br:,} | USA: {real_total_usa:,}")
 
 if __name__ == "__main__":
     main()

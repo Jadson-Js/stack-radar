@@ -820,11 +820,11 @@
         <div class="section-title">Stacks por Senioridade</div>
         <div class="card">
           <div class="tabs" id="tabs-nivel">
-            <button class="tab active" data-nivel="Geral">Geral</button>
-            <button class="tab" data-nivel="Sênior">Sênior</button>
-            <button class="tab" data-nivel="Pleno">Pleno</button>
+            <button class="tab active" data-nivel="General">Geral</button>
+            <button class="tab" data-nivel="Senior">Sênior</button>
+            <button class="tab" data-nivel="Mid-level">Pleno</button>
             <button class="tab" data-nivel="Junior">Junior</button>
-            <button class="tab" data-nivel="Estágio/Intern">Estágio</button>
+            <button class="tab" data-nivel="Internship">Estágio</button>
           </div>
           <div id="nivel-content" class="grid-cat">
             <!-- LEFT: Global (BR + EUA) -->
@@ -1007,24 +1007,24 @@
         "#94a3b8",
       ];
       const CAT_COLORS = {
-        Linguagens: "#6c63ff",
-        "Ferramentas & Práticas": "#94a3b8",
+        "Languages": "#6c63ff",
+        "Tools & Practices": "#94a3b8",
         "DevOps & Cloud": "#4ade80",
-        "Frameworks & Libs Backend": "#06b6d4",
-        "Frameworks & Libs Web": "#00d4aa",
-        "Dados & IA": "#ffd166",
-        Mobile: "#ff6b6b",
-        "Bancos de Dados": "#fb923c",
+        "Backend Frameworks & Libs": "#06b6d4",
+        "Web Frameworks & Libs": "#00d4aa",
+        "Data & AI": "#ffd166",
+        "Mobile": "#ff6b6b",
+        "Databases": "#fb923c",
       };
       const CAT_ORDER = [
-        "Linguagens",
-        "Frameworks & Libs Web",
-        "Frameworks & Libs Backend",
+        "Languages",
+        "Web Frameworks & Libs",
+        "Backend Frameworks & Libs",
         "Mobile",
-        "Bancos de Dados",
+        "Databases",
         "DevOps & Cloud",
-        "Dados & IA",
-        "Ferramentas & Práticas",
+        "Data & AI",
+        "Tools & Practices",
       ];
 
       // ── Utilitários ───────────────────────────────────────────────────────
@@ -1114,33 +1114,33 @@
           const fmt = (n) => n.toLocaleString("pt-BR");
           const kpi = D.kpi;
 
-          setText("kpi-total", fmt(kpi.totalGeral));
+          setText("kpi-total", fmt(kpi.totalGlobal));
           setText("kpi-br", fmt(kpi.totalBR));
           setText(
             "kpi-br-sub",
-            `${kpi.pctSeniorBR}% Sênior · ${kpi.pctEstagioBR}% Estágio`,
+            `${kpi.pctSeniorBR}% Sênior · ${kpi.pctInternshipBR}% Estágio`,
           );
-          setText("kpi-eua", fmt(kpi.totalEUA));
+          setText("kpi-eua", fmt(kpi.totalUSA));
           setText(
             "kpi-eua-sub",
-            `${kpi.pctSeniorEUA}% Sênior · ${kpi.pctEstagioEUA}% Estágio`,
+            `${kpi.pctSeniorUSA}% Sênior · ${kpi.pctInternshipUSA}% Estágio`,
           );
-          setText("kpi-remoto-br", `${kpi.pctRemotoBR}%`);
-          setText("kpi-remoto-eua-sub", `vs ${kpi.pctRemotoEUA}% nos EUA`);
+          setText("kpi-remoto-br", `${kpi.pctRemoteBR}%`);
+          setText("kpi-remoto-eua-sub", `vs ${kpi.pctRemoteUSA}% nos EUA`);
           setText("kpi-stack-global", kpi.stackGlobal);
           setText(
             "kpi-stack-global-sub",
-            `${fmt(kpi.mencoesGlobal)} menções combinadas`,
+            `${fmt(kpi.mentionsGlobal)} menções combinadas`,
           );
           setText("kpi-stack-br", kpi.stackBR);
-          setText("kpi-stack-br-sub", `${fmt(kpi.mencoesBR)} menções no BR`);
-          setText("kpi-stack-eua", kpi.stackEUA);
-          setText("kpi-stack-eua-sub", `${fmt(kpi.mencoesEUA)} menções no EUA`);
+          setText("kpi-stack-br-sub", `${fmt(kpi.mentionsBR)} menções no BR`);
+          setText("kpi-stack-eua", kpi.stackUSA);
+          setText("kpi-stack-eua-sub", `${fmt(kpi.mentionsUSA)} menções no EUA`);
 
           setText("header-periodo", "23/06/2025 até 23/06/2026");
           setText(
             "footer-texto",
-            `23/06/2025 até 23/06/2026 · ${fmt(kpi.totalGeral)} vagas analisadas no Brasil e EUA`,
+            `23/06/2025 até 23/06/2026 · ${fmt(kpi.totalGlobal)} vagas analisadas no Brasil e EUA`,
           );
 
           // ── 1. Ranking Global ─────────────────────────────────────────────
@@ -1186,16 +1186,28 @@
             const el = document.getElementById("chart-cat-donut");
             if (!el) return;
             const cats = CAT_ORDER.filter(
-              (c) => D.catBR[c] !== undefined || D.catEUA[c] !== undefined,
+              (c) => D.categoryBR[c] !== undefined || D.categoryUSA[c] !== undefined,
             );
             const vals = cats.map(
-              (c) => (D.catBR[c] || 0) + (D.catEUA[c] || 0),
+              (c) => (D.categoryBR[c] || 0) + (D.categoryUSA[c] || 0),
             );
             const colors = cats.map((c) => CAT_COLORS[c] || "#666");
             new Chart(el, {
               type: "doughnut",
               data: {
-                labels: cats,
+                labels: cats.map(c => {
+                  const catNamesPT = {
+                    "Languages": "Linguagens",
+                    "Tools & Practices": "Ferramentas & Práticas",
+                    "DevOps & Cloud": "DevOps & Cloud",
+                    "Backend Frameworks & Libs": "Frameworks Backend",
+                    "Web Frameworks & Libs": "Frameworks Web",
+                    "Data & AI": "Dados & IA",
+                    "Mobile": "Mobile",
+                    "Databases": "Bancos de Dados"
+                  };
+                  return catNamesPT[c] || c;
+                }),
                 datasets: [
                   {
                     data: vals,
@@ -1230,10 +1242,20 @@
           // ── 3. Stacks por Nível ───────────────────────────────────────────
           let nivelChart = null;
           function renderNivelChart(nivel) {
-            const data = (D.porNivel || {})[nivel] || [];
+            const data = (D.byLevel || {})[nivel] || [];
             const titleEl = document.getElementById("nivel-chart-title");
+            
+            const levelNamesPT = {
+              "General": "Geral",
+              "Senior": "Sênior",
+              "Mid-level": "Pleno",
+              "Junior": "Junior",
+              "Internship": "Estágio"
+            };
+            const displayNivel = levelNamesPT[nivel] || nivel;
+            
             if (titleEl)
-              titleEl.textContent = `🌐 Global (${nivel}) — BR + EUA`;
+              titleEl.textContent = `🌐 Global (${displayNivel}) — BR + EUA`;
             const chartEl = document.getElementById("chart-nivel");
             if (chartEl) {
               if (nivelChart) nivelChart.destroy();
@@ -1270,19 +1292,19 @@
             }
             makeBarList(
               "nivel-rank-br",
-              ((D.porNivelBR || {})[nivel] || []).slice(0, 8),
+              ((D.byLevelBR || {})[nivel] || []).slice(0, 8),
               "#6366f1",
             );
             makeBarList(
               "nivel-rank-eua",
-              ((D.porNivelEUA || {})[nivel] || []).slice(0, 8),
+              ((D.byLevelUSA || {})[nivel] || []).slice(0, 8),
               "#06b6d4",
             );
           }
 
           const tabsNivel = document.querySelectorAll("#tabs-nivel .tab");
           if (tabsNivel.length > 0) {
-            renderNivelChart("Geral");
+            renderNivelChart("General");
             tabsNivel.forEach((btn) => {
               btn.addEventListener("click", () => {
                 tabsNivel.forEach((b) => b.classList.remove("active"));
@@ -1296,14 +1318,21 @@
           (() => {
             const el = document.getElementById("chart-nivel-br");
             if (!el) return;
+            const keys = [
+              "General",
+              "Senior",
+              "Mid-level",
+              "Junior",
+              "Internship",
+            ];
             const labels = [
               "Geral",
               "Sênior",
               "Pleno",
               "Junior",
-              "Estágio/Intern",
+              "Estágio",
             ];
-            const vals = labels.map((l) => (D.niveisVagasBR || {})[l] || 0);
+            const vals = keys.map((k) => (D.levelsJobsBR || {})[k] || 0);
             const colors = [
               "#94a3b8",
               "#6c63ff",
@@ -1344,14 +1373,21 @@
           (() => {
             const el = document.getElementById("chart-nivel-eua");
             if (!el) return;
+            const keys = [
+              "General",
+              "Senior",
+              "Mid-level",
+              "Junior",
+              "Internship",
+            ];
             const labels = [
               "Geral",
               "Sênior",
               "Pleno",
               "Junior",
-              "Estágio/Intern",
+              "Estágio",
             ];
-            const vals = labels.map((l) => (D.niveisVagasEUA || {})[l] || 0);
+            const vals = keys.map((k) => (D.levelsJobsUSA || {})[k] || 0);
             const colors = [
               "#94a3b8",
               "#06b6d4",
@@ -1394,9 +1430,9 @@
             if (!el) return;
             const labels = ["Presencial", "Remoto", "Híbrido"];
             const vals = [
-              D.modalBR.presencial,
-              D.modalBR.remoto,
-              D.modalBR.hibrido,
+              D.modalityBR.onsite,
+              D.modalityBR.remote,
+              D.modalityBR.hybrid,
             ];
             const colors = ["#6366f1", "#00d4aa", "#ffd166"];
             new Chart(el, {
@@ -1424,9 +1460,9 @@
             if (!el) return;
             const labels = ["Presencial", "Remoto", "Híbrido"];
             const vals = [
-              D.modalEUA.presencial,
-              D.modalEUA.remoto,
-              D.modalEUA.hibrido,
+              D.modalityUSA.onsite,
+              D.modalityUSA.remote,
+              D.modalityUSA.hybrid,
             ];
             const colors = ["#06b6d4", "#00d4aa", "#ffd166"];
             new Chart(el, {
@@ -1467,7 +1503,7 @@
 
           // ── 9 & 10. Rankings Top BR e EUA ────────────────────────────────
           makeBarList("chart-br-rank", D.topBR || [], "#6366f1");
-          makeBarList("chart-eua-rank", D.topEUA || [], "#06b6d4");
+          makeBarList("chart-eua-rank", D.topUSA || [], "#06b6d4");
 
           // ── 11. Comparativo BR vs EUA ─────────────────────────────────────
           (() => {
@@ -1479,7 +1515,7 @@
               return f ? f.v : 0;
             });
             const euaVals = shared.map((t) => {
-              const f = (D.topEUA || []).find((d) => d.t === t);
+              const f = (D.topUSA || []).find((d) => d.t === t);
               return f ? f.v : 0;
             });
             new Chart(el, {
@@ -1530,20 +1566,32 @@
           let catChart = null;
           (() => {
             const cats = CAT_ORDER.filter(
-              (c) => D.porCategoria[c] !== undefined,
+              (c) => D.byCategory[c] !== undefined,
             );
             const tabsEl = document.getElementById("tabs-cat");
             if (!tabsEl) return;
             tabsEl.innerHTML = cats
               .map(
-                (c, i) =>
-                  `<button class="tab${i === 0 ? " active" : ""}" data-cat="${c}">${c.replace("Frameworks & Libs ", "FW ")}</button>`,
+                (c, i) => {
+                  const catNamesPT = {
+                    "Languages": "Linguagens",
+                    "Tools & Practices": "Ferramentas",
+                    "DevOps & Cloud": "DevOps/Cloud",
+                    "Backend Frameworks & Libs": "FW Backend",
+                    "Web Frameworks & Libs": "FW Web",
+                    "Data & AI": "Dados/IA",
+                    "Mobile": "Mobile",
+                    "Databases": "Bancos de Dados"
+                  };
+                  const label = catNamesPT[c] || c.replace("Frameworks & Libs ", "FW ");
+                  return `<button class="tab${i === 0 ? " active" : ""}" data-cat="${c}">${label}</button>`;
+                }
               )
               .join("");
 
             function renderCat(cat) {
               const color = CAT_COLORS[cat] || "#6c63ff";
-              const data = (D.porCategoria || {})[cat] || [];
+              const data = (D.byCategory || {})[cat] || [];
               const chartEl = document.getElementById("chart-cat");
               if (chartEl) {
                 if (catChart) catChart.destroy();
@@ -1580,12 +1628,12 @@
               }
               makeBarList(
                 "cat-rank-br",
-                ((D.porCategoriaBR || {})[cat] || []).slice(0, 8),
+                ((D.byCategoryBR || {})[cat] || []).slice(0, 8),
                 color,
               );
               makeBarList(
                 "cat-rank-eua",
-                ((D.porCategoriaEUA || {})[cat] || []).slice(0, 8),
+                ((D.byCategoryUSA || {})[cat] || []).slice(0, 8),
                 color,
               );
             }
@@ -1644,27 +1692,34 @@
           (() => {
             const el = document.getElementById("chart-cat-country");
             if (!el) return;
-            const cats = CAT_ORDER.filter((c) => D.catBR[c] !== undefined);
+            const cats = CAT_ORDER.filter((c) => D.categoryBR[c] !== undefined);
+            
+            const catLabelsPT = {
+              "Languages": "Linguagens",
+              "Tools & Practices": "Ferramentas",
+              "DevOps & Cloud": "DevOps/Cloud",
+              "Backend Frameworks & Libs": "FW Backend",
+              "Web Frameworks & Libs": "FW Web",
+              "Data & AI": "Dados/IA",
+              "Mobile": "Mobile",
+              "Databases": "Bancos DB"
+            };
+
             new Chart(el, {
               type: "bar",
               data: {
-                labels: cats.map((c) =>
-                  c
-                    .replace("Frameworks & Libs ", "FW ")
-                    .replace("Ferramentas & Práticas", "Ferramentas")
-                    .replace("Bancos de Dados", "Bancos DB"),
-                ),
+                labels: cats.map((c) => catLabelsPT[c] || c),
                 datasets: [
                   {
                     label: "🇧🇷 Brasil",
-                    data: cats.map((c) => D.catBR[c] || 0),
+                    data: cats.map((c) => D.categoryBR[c] || 0),
                     backgroundColor: "rgba(99,102,241,0.8)",
                     borderRadius: 4,
                     borderSkipped: false,
                   },
                   {
                     label: "🇺🇸 EUA",
-                    data: cats.map((c) => D.catEUA[c] || 0),
+                    data: cats.map((c) => D.categoryUSA[c] || 0),
                     backgroundColor: "rgba(6,182,212,0.8)",
                     borderRadius: 4,
                     borderSkipped: false,

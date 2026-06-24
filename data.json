@@ -1,1330 +1,1414 @@
 {
   "kpi": {
-    "totalBR": 8776,
-    "totalEUA": 14709,
-    "totalGeral": 23485,
-    "pctRemotoBR": 7.5,
-    "pctRemotoEUA": 17.7,
-    "stackGlobal": "Oracle",
-    "mencoesGlobal": 961,
-    "stackBR": "C",
-    "mencoesBR": 402,
-    "stackEUA": "Oracle",
-    "mencoesEUA": 909,
-    "pctSeniorBR": 23.7,
-    "pctEstagioBR": 11.2,
-    "pctSeniorEUA": 33.6,
-    "pctEstagioEUA": 8.7
+    "totalBR": 24800,
+    "totalUSA": 54060,
+    "totalGlobal": 78860,
+    "pctRemoteBR": 7.5,
+    "pctRemoteUSA": 15.0,
+    "stackGlobal": "C",
+    "mentionsGlobal": 1776,
+    "stackBR": "Segurança",
+    "mentionsBR": 1431,
+    "stackUSA": "Java",
+    "mentionsUSA": 1287,
+    "pctSeniorBR": 15.2,
+    "pctInternshipBR": 16.3,
+    "pctSeniorUSA": 46.8,
+    "pctInternshipUSA": 6.1
   },
   "topGlobal": [
     {
-      "t": "Oracle",
-      "v": 961
-    },
-    {
       "t": "C",
-      "v": 793
+      "v": 1776
     },
     {
       "t": "Java",
-      "v": 621
-    },
-    {
-      "t": "JavaScript/TypeScript",
-      "v": 581
+      "v": 1719
     },
     {
       "t": "R",
-      "v": 483
-    },
-    {
-      "t": "Agile",
-      "v": 409
-    },
-    {
-      "t": "Python",
-      "v": 401
+      "v": 1436
     },
     {
       "t": "Segurança",
-      "v": 381
+      "v": 1431
     },
     {
-      "t": "SQL",
-      "v": 365
+      "t": "JavaScript/TypeScript",
+      "v": 1113
+    },
+    {
+      "t": "Oracle",
+      "v": 965
+    },
+    {
+      "t": "Python",
+      "v": 962
     },
     {
       "t": "React",
-      "v": 364
+      "v": 920
     },
     {
-      "t": ".NET",
-      "v": 345
+      "t": "SQL",
+      "v": 900
+    },
+    {
+      "t": "Agile",
+      "v": 896
+    },
+    {
+      "t": "Android",
+      "v": 822
     },
     {
       "t": "AWS",
-      "v": 331
+      "v": 803
     },
     {
-      "t": "Angular",
-      "v": 301
+      "t": "iOS",
+      "v": 803
     },
     {
-      "t": "C#",
-      "v": 256
+      "t": ".NET",
+      "v": 653
     },
     {
-      "t": "REST",
-      "v": 180
+      "t": "Machine Learning",
+      "v": 607
     }
   ],
   "topBR": [
     {
-      "t": "C",
-      "v": 402
-    },
-    {
       "t": "Segurança",
-      "v": 381
-    },
-    {
-      "t": "JavaScript/TypeScript",
-      "v": 359
-    },
-    {
-      "t": "Java",
-      "v": 296
-    },
-    {
-      "t": "SQL",
-      "v": 204
+      "v": 1431
     },
     {
       "t": "R",
-      "v": 204
+      "v": 952
+    },
+    {
+      "t": "C",
+      "v": 920
+    },
+    {
+      "t": "JavaScript/TypeScript",
+      "v": 537
+    },
+    {
+      "t": "Java",
+      "v": 432
+    },
+    {
+      "t": "SQL",
+      "v": 353
     },
     {
       "t": "React",
-      "v": 197
-    },
-    {
-      "t": "Angular",
-      "v": 171
-    },
-    {
-      "t": ".NET",
-      "v": 164
+      "v": 335
     },
     {
       "t": "Python",
-      "v": 141
+      "v": 270
+    },
+    {
+      "t": ".NET",
+      "v": 210
     },
     {
       "t": "REST",
-      "v": 127
+      "v": 208
     },
     {
-      "t": "C#",
-      "v": 115
+      "t": "Angular",
+      "v": 189
     },
     {
       "t": "AWS",
-      "v": 102
+      "v": 177
     },
     {
       "t": "PHP",
-      "v": 95
-    },
-    {
-      "t": "SQL Server",
-      "v": 92
-    }
-  ],
-  "topEUA": [
-    {
-      "t": "Oracle",
-      "v": 909
-    },
-    {
-      "t": "Agile",
-      "v": 396
-    },
-    {
-      "t": "C",
-      "v": 391
-    },
-    {
-      "t": "Java",
-      "v": 325
-    },
-    {
-      "t": "R",
-      "v": 279
-    },
-    {
-      "t": "Python",
-      "v": 260
-    },
-    {
-      "t": "AWS",
-      "v": 229
-    },
-    {
-      "t": "JavaScript/TypeScript",
-      "v": 222
-    },
-    {
-      "t": ".NET",
-      "v": 181
-    },
-    {
-      "t": "Fiber",
-      "v": 175
-    },
-    {
-      "t": "Lumen",
-      "v": 170
-    },
-    {
-      "t": "React",
-      "v": 167
-    },
-    {
-      "t": "SQL",
-      "v": 161
+      "v": 162
     },
     {
       "t": "C#",
-      "v": 141
+      "v": 152
     },
     {
-      "t": "C++",
-      "v": 137
+      "t": "Spring",
+      "v": 124
     }
   ],
-  "porNivel": {
-    "Geral": [
+  "topUSA": [
+    {
+      "t": "Java",
+      "v": 1287
+    },
+    {
+      "t": "Oracle",
+      "v": 884
+    },
+    {
+      "t": "C",
+      "v": 856
+    },
+    {
+      "t": "Agile",
+      "v": 805
+    },
+    {
+      "t": "Android",
+      "v": 750
+    },
+    {
+      "t": "iOS",
+      "v": 740
+    },
+    {
+      "t": "Python",
+      "v": 692
+    },
+    {
+      "t": "AWS",
+      "v": 626
+    },
+    {
+      "t": "React",
+      "v": 585
+    },
+    {
+      "t": "JavaScript/TypeScript",
+      "v": 576
+    },
+    {
+      "t": "Machine Learning",
+      "v": 568
+    },
+    {
+      "t": "SQL",
+      "v": 547
+    },
+    {
+      "t": "R",
+      "v": 484
+    },
+    {
+      "t": "SAFe",
+      "v": 474
+    },
+    {
+      "t": ".NET",
+      "v": 443
+    }
+  ],
+  "byLevel": {
+    "General": [
+      {
+        "t": "C",
+        "v": 1776
+      },
+      {
+        "t": "Java",
+        "v": 1719
+      },
+      {
+        "t": "R",
+        "v": 1436
+      },
+      {
+        "t": "Segurança",
+        "v": 1431
+      },
+      {
+        "t": "JavaScript/TypeScript",
+        "v": 1113
+      },
+      {
+        "t": "Oracle",
+        "v": 965
+      },
+      {
+        "t": "Python",
+        "v": 962
+      },
+      {
+        "t": "React",
+        "v": 920
+      },
+      {
+        "t": "SQL",
+        "v": 900
+      },
+      {
+        "t": "Agile",
+        "v": 896
+      }
+    ],
+    "Senior": [
+      {
+        "t": "Java",
+        "v": 1706
+      },
+      {
+        "t": "C",
+        "v": 1350
+      },
+      {
+        "t": "AWS",
+        "v": 1318
+      },
       {
         "t": "Oracle",
         "v": 961
       },
       {
-        "t": "C",
-        "v": 793
+        "t": "Agile",
+        "v": 919
       },
       {
-        "t": "Java",
-        "v": 621
+        "t": "React",
+        "v": 852
+      },
+      {
+        "t": ".NET",
+        "v": 794
       },
       {
         "t": "JavaScript/TypeScript",
-        "v": 581
+        "v": 693
       },
       {
-        "t": "R",
-        "v": 483
-      },
-      {
-        "t": "Agile",
-        "v": 409
+        "t": "Android",
+        "v": 688
       },
       {
         "t": "Python",
-        "v": 401
-      },
-      {
-        "t": "Segurança",
-        "v": 381
-      },
-      {
-        "t": "SQL",
-        "v": 365
-      },
-      {
-        "t": "React",
-        "v": 364
+        "v": 684
       }
     ],
-    "Sênior": [
+    "Mid-level": [
       {
-        "t": "Oracle",
-        "v": 859
+        "t": "C",
+        "v": 331
       },
       {
         "t": "Java",
-        "v": 494
-      },
-      {
-        "t": "Agile",
-        "v": 479
-      },
-      {
-        "t": "C",
-        "v": 453
+        "v": 214
       },
       {
         "t": ".NET",
-        "v": 303
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 269
-      },
-      {
-        "t": "React",
-        "v": 264
-      },
-      {
-        "t": "SQL",
-        "v": 207
-      },
-      {
-        "t": "Python",
-        "v": 195
-      },
-      {
-        "t": "AWS",
-        "v": 187
-      }
-    ],
-    "Pleno": [
-      {
-        "t": "C",
-        "v": 260
-      },
-      {
-        "t": "Java",
-        "v": 162
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 135
-      },
-      {
-        "t": ".NET",
-        "v": 131
-      },
-      {
-        "t": "React",
-        "v": 110
-      },
-      {
-        "t": "REST",
-        "v": 93
-      },
-      {
-        "t": "SQL",
-        "v": 89
-      },
-      {
-        "t": "C#",
-        "v": 79
-      },
-      {
-        "t": "Segurança",
-        "v": 75
-      },
-      {
-        "t": "Angular",
-        "v": 70
-      }
-    ],
-    "Junior": [
-      {
-        "t": "C",
-        "v": 88
-      },
-      {
-        "t": "Agile",
-        "v": 80
-      },
-      {
-        "t": "Java",
-        "v": 67
-      },
-      {
-        "t": "R",
-        "v": 51
-      },
-      {
-        "t": "LLM",
-        "v": 48
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 46
-      },
-      {
-        "t": "SQL",
-        "v": 39
-      },
-      {
-        "t": ".NET",
-        "v": 39
-      },
-      {
-        "t": "React",
-        "v": 37
-      },
-      {
-        "t": "C#",
-        "v": 31
-      }
-    ],
-    "Estágio/Intern": [
-      {
-        "t": "C",
-        "v": 153
-      },
-      {
-        "t": ".NET",
-        "v": 71
-      },
-      {
-        "t": "Segurança",
-        "v": 71
-      },
-      {
-        "t": "R",
-        "v": 70
-      },
-      {
-        "t": "Java",
-        "v": 66
-      },
-      {
-        "t": "Oracle",
-        "v": 62
-      },
-      {
-        "t": "C#",
-        "v": 56
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 53
-      },
-      {
-        "t": "SQL",
-        "v": 50
-      },
-      {
-        "t": "React",
-        "v": 48
-      }
-    ]
-  },
-  "porNivelBR": {
-    "Geral": [
-      {
-        "t": "C",
-        "v": 402
-      },
-      {
-        "t": "Segurança",
-        "v": 381
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 359
-      },
-      {
-        "t": "Java",
-        "v": 296
-      },
-      {
-        "t": "SQL",
-        "v": 204
-      },
-      {
-        "t": "R",
-        "v": 204
-      },
-      {
-        "t": "React",
-        "v": 197
-      },
-      {
-        "t": "Angular",
         "v": 171
-      },
-      {
-        "t": ".NET",
-        "v": 164
-      },
-      {
-        "t": "Python",
-        "v": 141
-      }
-    ],
-    "Sênior": [
-      {
-        "t": "Java",
-        "v": 298
-      },
-      {
-        "t": "C",
-        "v": 284
-      },
-      {
-        "t": ".NET",
-        "v": 173
-      },
-      {
-        "t": "Segurança",
-        "v": 167
-      },
-      {
-        "t": "React",
-        "v": 163
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 119
-      },
-      {
-        "t": "R",
-        "v": 118
-      },
-      {
-        "t": "REST",
-        "v": 112
-      },
-      {
-        "t": "SQL",
-        "v": 101
-      },
-      {
-        "t": "Angular",
-        "v": 97
-      }
-    ],
-    "Pleno": [
-      {
-        "t": "C",
-        "v": 203
-      },
-      {
-        "t": "Java",
-        "v": 145
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 132
-      },
-      {
-        "t": ".NET",
-        "v": 124
-      },
-      {
-        "t": "React",
-        "v": 106
-      },
-      {
-        "t": "REST",
-        "v": 90
-      },
-      {
-        "t": "SQL",
-        "v": 85
-      },
-      {
-        "t": "Segurança",
-        "v": 75
-      },
-      {
-        "t": "C#",
-        "v": 73
-      },
-      {
-        "t": "PHP",
-        "v": 65
-      }
-    ],
-    "Junior": [
-      {
-        "t": "C",
-        "v": 71
-      },
-      {
-        "t": "R",
-        "v": 44
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 41
-      },
-      {
-        "t": "Java",
-        "v": 38
-      },
-      {
-        "t": "React",
-        "v": 33
-      },
-      {
-        "t": "SQL",
-        "v": 29
-      },
-      {
-        "t": ".NET",
-        "v": 27
-      },
-      {
-        "t": "C#",
-        "v": 27
-      },
-      {
-        "t": "Segurança",
-        "v": 25
-      },
-      {
-        "t": "PHP",
-        "v": 20
-      }
-    ],
-    "Estágio/Intern": [
-      {
-        "t": "C",
-        "v": 117
-      },
-      {
-        "t": "Segurança",
-        "v": 71
-      },
-      {
-        "t": "R",
-        "v": 63
-      },
-      {
-        "t": ".NET",
-        "v": 43
-      },
-      {
-        "t": "Java",
-        "v": 42
-      },
-      {
-        "t": "SQL",
-        "v": 40
-      },
-      {
-        "t": "C#",
-        "v": 40
-      },
-      {
-        "t": "React",
-        "v": 39
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 38
-      },
-      {
-        "t": "Python",
-        "v": 33
-      }
-    ]
-  },
-  "porNivelEUA": {
-    "Geral": [
-      {
-        "t": "Oracle",
-        "v": 909
-      },
-      {
-        "t": "Agile",
-        "v": 396
-      },
-      {
-        "t": "C",
-        "v": 391
-      },
-      {
-        "t": "Java",
-        "v": 325
-      },
-      {
-        "t": "R",
-        "v": 279
-      },
-      {
-        "t": "Python",
-        "v": 260
-      },
-      {
-        "t": "AWS",
-        "v": 229
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 222
-      },
-      {
-        "t": ".NET",
-        "v": 181
-      },
-      {
-        "t": "Fiber",
-        "v": 175
-      }
-    ],
-    "Sênior": [
-      {
-        "t": "Oracle",
-        "v": 823
-      },
-      {
-        "t": "Agile",
-        "v": 474
-      },
-      {
-        "t": "Java",
-        "v": 196
-      },
-      {
-        "t": "C",
-        "v": 169
       },
       {
         "t": "JavaScript/TypeScript",
         "v": 150
       },
       {
-        "t": ".NET",
-        "v": 130
+        "t": "React",
+        "v": 129
       },
       {
         "t": "SQL",
+        "v": 123
+      },
+      {
+        "t": "Segurança",
+        "v": 111
+      },
+      {
+        "t": "C#",
+        "v": 109
+      },
+      {
+        "t": "REST",
+        "v": 103
+      },
+      {
+        "t": "Angular",
+        "v": 88
+      }
+    ],
+    "Junior": [
+      {
+        "t": "C",
+        "v": 145
+      },
+      {
+        "t": "Java",
+        "v": 112
+      },
+      {
+        "t": "Agile",
+        "v": 107
+      },
+      {
+        "t": "R",
+        "v": 107
+      },
+      {
+        "t": "React",
+        "v": 67
+      },
+      {
+        "t": "JavaScript/TypeScript",
+        "v": 65
+      },
+      {
+        "t": "Segurança",
+        "v": 64
+      },
+      {
+        "t": "SQL",
+        "v": 62
+      },
+      {
+        "t": "CI/CD",
+        "v": 61
+      },
+      {
+        "t": ".NET",
+        "v": 55
+      }
+    ],
+    "Internship": [
+      {
+        "t": "C",
+        "v": 376
+      },
+      {
+        "t": "R",
+        "v": 326
+      },
+      {
+        "t": "Segurança",
+        "v": 242
+      },
+      {
+        "t": "Java",
+        "v": 159
+      },
+      {
+        "t": ".NET",
+        "v": 127
+      },
+      {
+        "t": "SQL",
+        "v": 113
+      },
+      {
+        "t": "AWS",
+        "v": 109
+      },
+      {
+        "t": "C#",
         "v": 106
       },
       {
         "t": "React",
-        "v": 101
+        "v": 106
       },
       {
         "t": "Python",
-        "v": 99
+        "v": 106
+      }
+    ]
+  },
+  "byLevelBR": {
+    "General": [
+      {
+        "t": "Segurança",
+        "v": 1431
       },
       {
-        "t": "Linux",
-        "v": 95
-      }
-    ],
-    "Pleno": [
+        "t": "R",
+        "v": 952
+      },
       {
         "t": "C",
-        "v": 57
+        "v": 920
       },
       {
-        "t": "C++",
-        "v": 50
-      },
-      {
-        "t": "Linux",
-        "v": 49
+        "t": "JavaScript/TypeScript",
+        "v": 537
       },
       {
         "t": "Java",
-        "v": 17
+        "v": 432
       },
       {
-        "t": "CI/CD",
-        "v": 10
+        "t": "SQL",
+        "v": 353
       },
       {
-        "t": "Scrum",
-        "v": 9
-      },
-      {
-        "t": ".NET",
-        "v": 7
-      },
-      {
-        "t": "Angular",
-        "v": 7
+        "t": "React",
+        "v": 335
       },
       {
         "t": "Python",
-        "v": 6
+        "v": 270
+      },
+      {
+        "t": ".NET",
+        "v": 210
+      },
+      {
+        "t": "REST",
+        "v": 208
+      }
+    ],
+    "Senior": [
+      {
+        "t": "Java",
+        "v": 390
+      },
+      {
+        "t": "C",
+        "v": 372
+      },
+      {
+        "t": ".NET",
+        "v": 214
+      },
+      {
+        "t": "React",
+        "v": 213
+      },
+      {
+        "t": "Segurança",
+        "v": 212
+      },
+      {
+        "t": "R",
+        "v": 154
+      },
+      {
+        "t": "JavaScript/TypeScript",
+        "v": 153
+      },
+      {
+        "t": "AWS",
+        "v": 147
+      },
+      {
+        "t": "Python",
+        "v": 144
+      },
+      {
+        "t": "SQL",
+        "v": 143
+      }
+    ],
+    "Mid-level": [
+      {
+        "t": "C",
+        "v": 249
+      },
+      {
+        "t": "Java",
+        "v": 178
+      },
+      {
+        "t": ".NET",
+        "v": 152
+      },
+      {
+        "t": "JavaScript/TypeScript",
+        "v": 142
+      },
+      {
+        "t": "React",
+        "v": 116
+      },
+      {
+        "t": "SQL",
+        "v": 111
+      },
+      {
+        "t": "Segurança",
+        "v": 111
+      },
+      {
+        "t": "C#",
+        "v": 97
+      },
+      {
+        "t": "REST",
+        "v": 96
+      },
+      {
+        "t": "Angular",
+        "v": 78
+      }
+    ],
+    "Junior": [
+      {
+        "t": "C",
+        "v": 105
+      },
+      {
+        "t": "R",
+        "v": 90
+      },
+      {
+        "t": "Segurança",
+        "v": 64
+      },
+      {
+        "t": "JavaScript/TypeScript",
+        "v": 49
+      },
+      {
+        "t": "React",
+        "v": 48
+      },
+      {
+        "t": "Java",
+        "v": 47
+      },
+      {
+        "t": "SQL",
+        "v": 46
+      },
+      {
+        "t": "C#",
+        "v": 33
+      },
+      {
+        "t": ".NET",
+        "v": 33
+      },
+      {
+        "t": "PHP",
+        "v": 28
+      }
+    ],
+    "Internship": [
+      {
+        "t": "R",
+        "v": 301
+      },
+      {
+        "t": "C",
+        "v": 267
+      },
+      {
+        "t": "Segurança",
+        "v": 242
+      },
+      {
+        "t": "Java",
+        "v": 70
+      },
+      {
+        "t": "SQL",
+        "v": 60
+      },
+      {
+        "t": ".NET",
+        "v": 58
+      },
+      {
+        "t": "React",
+        "v": 54
+      },
+      {
+        "t": "C#",
+        "v": 54
+      },
+      {
+        "t": "Python",
+        "v": 49
+      },
+      {
+        "t": "PHP",
+        "v": 48
+      }
+    ]
+  },
+  "byLevelUSA": {
+    "General": [
+      {
+        "t": "Java",
+        "v": 1287
+      },
+      {
+        "t": "Oracle",
+        "v": 884
+      },
+      {
+        "t": "C",
+        "v": 856
       },
       {
         "t": "Agile",
-        "v": 6
+        "v": 805
+      },
+      {
+        "t": "Android",
+        "v": 750
+      },
+      {
+        "t": "iOS",
+        "v": 740
+      },
+      {
+        "t": "Python",
+        "v": 692
+      },
+      {
+        "t": "AWS",
+        "v": 626
+      },
+      {
+        "t": "React",
+        "v": 585
+      },
+      {
+        "t": "JavaScript/TypeScript",
+        "v": 576
+      }
+    ],
+    "Senior": [
+      {
+        "t": "Java",
+        "v": 1316
+      },
+      {
+        "t": "AWS",
+        "v": 1171
+      },
+      {
+        "t": "C",
+        "v": 978
+      },
+      {
+        "t": "Oracle",
+        "v": 900
+      },
+      {
+        "t": "Agile",
+        "v": 898
+      },
+      {
+        "t": "React",
+        "v": 639
+      },
+      {
+        "t": "Android",
+        "v": 611
+      },
+      {
+        "t": ".NET",
+        "v": 580
+      },
+      {
+        "t": "Python",
+        "v": 540
+      },
+      {
+        "t": "JavaScript/TypeScript",
+        "v": 540
+      }
+    ],
+    "Mid-level": [
+      {
+        "t": "C",
+        "v": 82
+      },
+      {
+        "t": "C++",
+        "v": 54
+      },
+      {
+        "t": "Linux",
+        "v": 48
+      },
+      {
+        "t": "Java",
+        "v": 36
+      },
+      {
+        "t": "Agile",
+        "v": 22
+      },
+      {
+        "t": ".NET",
+        "v": 19
+      },
+      {
+        "t": "Python",
+        "v": 18
+      },
+      {
+        "t": "React",
+        "v": 13
+      },
+      {
+        "t": "C#",
+        "v": 12
+      },
+      {
+        "t": "CI/CD",
+        "v": 12
       }
     ],
     "Junior": [
       {
         "t": "Agile",
-        "v": 77
-      },
-      {
-        "t": "LLM",
-        "v": 47
+        "v": 100
       },
       {
         "t": "Java",
-        "v": 29
+        "v": 65
+      },
+      {
+        "t": "CI/CD",
+        "v": 55
+      },
+      {
+        "t": "Cybersecurity",
+        "v": 54
       },
       {
         "t": "C",
-        "v": 17
-      },
-      {
-        "t": ".NET",
-        "v": 12
-      },
-      {
-        "t": "Angular",
-        "v": 12
-      },
-      {
-        "t": "SQL",
-        "v": 10
-      },
-      {
-        "t": "C++",
-        "v": 10
+        "v": 40
       },
       {
         "t": "Python",
-        "v": 9
-      },
-      {
-        "t": "AWS",
-        "v": 8
-      }
-    ],
-    "Estágio/Intern": [
-      {
-        "t": "Oracle",
-        "v": 56
-      },
-      {
-        "t": "C",
-        "v": 36
+        "v": 24
       },
       {
         "t": ".NET",
-        "v": 28
+        "v": 22
       },
       {
-        "t": "Java",
-        "v": 24
-      },
-      {
-        "t": "Agile",
-        "v": 19
-      },
-      {
-        "t": "AWS",
-        "v": 17
-      },
-      {
-        "t": "C#",
-        "v": 16
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 15
-      },
-      {
-        "t": "SQL",
-        "v": 10
-      },
-      {
-        "t": "Spring",
-        "v": 9
-      }
-    ]
-  },
-  "niveisVagasBR": {
-    "Sênior": 2083,
-    "Pleno": 1055,
-    "Geral": 4206,
-    "Junior": 453,
-    "Estágio/Intern": 979
-  },
-  "niveisVagasEUA": {
-    "Sênior": 4945,
-    "Pleno": 172,
-    "Geral": 7893,
-    "Junior": 426,
-    "Estágio/Intern": 1273
-  },
-  "modalBR": {
-    "remoto": 375,
-    "hibrido": 162,
-    "presencial": 4440
-  },
-  "modalEUA": {
-    "remoto": 1156,
-    "hibrido": 446,
-    "presencial": 4947
-  },
-  "catBR": {
-    "Bancos de Dados": 278,
-    "Dados & IA": 131,
-    "DevOps & Cloud": 374,
-    "Ferramentas & Práticas": 776,
-    "Frameworks & Libs Backend": 751,
-    "Frameworks & Libs Web": 509,
-    "Linguagens": 1985,
-    "Mobile": 173
-  },
-  "catEUA": {
-    "Bancos de Dados": 1098,
-    "Dados & IA": 251,
-    "DevOps & Cloud": 647,
-    "Ferramentas & Práticas": 1043,
-    "Frameworks & Libs Backend": 982,
-    "Frameworks & Libs Web": 384,
-    "Linguagens": 2092,
-    "Mobile": 52
-  },
-  "topRemote": [
-    {
-      "t": "Airflow",
-      "pct": 82.6,
-      "n": 46
-    },
-    {
-      "t": "PostgreSQL",
-      "pct": 58.6,
-      "n": 133
-    },
-    {
-      "t": "RAG",
-      "pct": 57.1,
-      "n": 28
-    },
-    {
-      "t": "Hadoop",
-      "pct": 50.0,
-      "n": 6
-    },
-    {
-      "t": "SOLID",
-      "pct": 49.5,
-      "n": 101
-    },
-    {
-      "t": "Kubernetes",
-      "pct": 48.1,
-      "n": 108
-    },
-    {
-      "t": "Snowflake",
-      "pct": 40.0,
-      "n": 5
-    },
-    {
-      "t": "Scala",
-      "pct": 37.5,
-      "n": 8
-    },
-    {
-      "t": "DynamoDB",
-      "pct": 36.8,
-      "n": 19
-    },
-    {
-      "t": "Machine Learning",
-      "pct": 35.5,
-      "n": 107
-    },
-    {
-      "t": "Prometheus",
-      "pct": 33.3,
-      "n": 6
-    },
-    {
-      "t": "Spark",
-      "pct": 33.3,
-      "n": 12
-    },
-    {
-      "t": "Linux",
-      "pct": 32.5,
-      "n": 163
-    },
-    {
-      "t": "Oracle",
-      "pct": 31.9,
-      "n": 961
-    }
-  ],
-  "porCategoria": {
-    "Bancos de Dados": [
-      {
-        "t": "Oracle",
-        "v": 1909
-      },
-      {
-        "t": "SQL Server",
-        "v": 276
-      },
-      {
-        "t": "PostgreSQL",
-        "v": 214
-      },
-      {
-        "t": "MySQL",
-        "v": 175
-      },
-      {
-        "t": "MongoDB",
-        "v": 77
-      },
-      {
-        "t": "Redis",
-        "v": 45
-      },
-      {
-        "t": "DynamoDB",
-        "v": 26
-      },
-      {
-        "t": "Elasticsearch",
+        "t": "Angular",
         "v": 20
       },
       {
-        "t": "Firebase",
-        "v": 8
+        "t": "AWS",
+        "v": 19
       },
       {
-        "t": "SQLite",
-        "v": 8
+        "t": "React",
+        "v": 19
       }
     ],
-    "Dados & IA": [
+    "Internship": [
+      {
+        "t": "C",
+        "v": 109
+      },
+      {
+        "t": "AWS",
+        "v": 94
+      },
+      {
+        "t": "Java",
+        "v": 89
+      },
+      {
+        "t": ".NET",
+        "v": 69
+      },
+      {
+        "t": "MongoDB",
+        "v": 60
+      },
+      {
+        "t": "Python",
+        "v": 57
+      },
+      {
+        "t": "JavaScript/TypeScript",
+        "v": 54
+      },
+      {
+        "t": "SQL",
+        "v": 53
+      },
+      {
+        "t": "C#",
+        "v": 52
+      },
+      {
+        "t": "React",
+        "v": 52
+      }
+    ]
+  },
+  "levelsJobsBR": {
+    "Senior": 3766,
+    "Mid-level": 1536,
+    "General": 14463,
+    "Junior": 999,
+    "Internship": 4036
+  },
+  "levelsJobsUSA": {
+    "Senior": 25320,
+    "Mid-level": 354,
+    "General": 24089,
+    "Junior": 1023,
+    "Internship": 3274
+  },
+  "modalityBR": {
+    "remote": 723,
+    "hybrid": 211,
+    "onsite": 8654
+  },
+  "modalityUSA": {
+    "remote": 2803,
+    "hybrid": 1155,
+    "onsite": 14769
+  },
+  "categoryBR": {
+    "Backend Frameworks & Libs": 1114,
+    "Data & AI": 246,
+    "Databases": 377,
+    "DevOps & Cloud": 611,
+    "Languages": 4086,
+    "Mobile": 273,
+    "Tools & Practices": 2143,
+    "Web Frameworks & Libs": 738
+  },
+  "categoryUSA": {
+    "Backend Frameworks & Libs": 2717,
+    "Data & AI": 1383,
+    "Databases": 1297,
+    "DevOps & Cloud": 2077,
+    "Languages": 5839,
+    "Mobile": 1683,
+    "Tools & Practices": 2522,
+    "Web Frameworks & Libs": 1209
+  },
+  "topRemote": [
+    {
+      "t": "Ruby on Rails",
+      "pct": 79.2,
+      "n": 77
+    },
+    {
+      "t": "Airflow",
+      "pct": 76.5,
+      "n": 51
+    },
+    {
+      "t": "Ruby",
+      "pct": 66.7,
+      "n": 93
+    },
+    {
+      "t": "Rails",
+      "pct": 65.3,
+      "n": 95
+    },
+    {
+      "t": "Databricks",
+      "pct": 61.1,
+      "n": 131
+    },
+    {
+      "t": "Hadoop",
+      "pct": 53.8,
+      "n": 13
+    },
+    {
+      "t": "PostgreSQL",
+      "pct": 45.1,
+      "n": 193
+    },
+    {
+      "t": "Perl",
+      "pct": 44.4,
+      "n": 9
+    },
+    {
+      "t": "Laravel",
+      "pct": 41.2,
+      "n": 97
+    },
+    {
+      "t": "RAG",
+      "pct": 41.1,
+      "n": 56
+    },
+    {
+      "t": "Go",
+      "pct": 35.8,
+      "n": 509
+    },
+    {
+      "t": "Apache Kafka",
+      "pct": 33.3,
+      "n": 6
+    },
+    {
+      "t": "Grafana",
+      "pct": 33.3,
+      "n": 27
+    },
+    {
+      "t": "Redshift",
+      "pct": 33.3,
+      "n": 12
+    }
+  ],
+  "byCategory": {
+    "Backend Frameworks & Libs": [
+      {
+        "t": ".NET",
+        "v": 1800
+      },
+      {
+        "t": "Spring",
+        "v": 1003
+      },
+      {
+        "t": "REST",
+        "v": 986
+      },
+      {
+        "t": "Spring Boot",
+        "v": 700
+      },
+      {
+        "t": "Node.js",
+        "v": 687
+      },
+      {
+        "t": "RESTful",
+        "v": 571
+      },
+      {
+        "t": "Fiber",
+        "v": 394
+      },
+      {
+        "t": "Lumen",
+        "v": 347
+      },
+      {
+        "t": "ASP.NET",
+        "v": 228
+      },
+      {
+        "t": "Express",
+        "v": 215
+      }
+    ],
+    "Data & AI": [
       {
         "t": "Machine Learning",
-        "v": 170
-      },
-      {
-        "t": "Kafka",
-        "v": 129
-      },
-      {
-        "t": "LLM",
-        "v": 80
-      },
-      {
-        "t": "Power BI",
-        "v": 74
-      },
-      {
-        "t": "Apache Kafka",
-        "v": 61
-      },
-      {
-        "t": "Airflow",
-        "v": 47
-      },
-      {
-        "t": "RAG",
-        "v": 35
-      },
-      {
-        "t": "Spark",
-        "v": 24
-      },
-      {
-        "t": "Deep Learning",
-        "v": 17
+        "v": 1228
       },
       {
         "t": "Databricks",
-        "v": 14
+        "v": 284
+      },
+      {
+        "t": "Kafka",
+        "v": 283
+      },
+      {
+        "t": "LLM",
+        "v": 268
+      },
+      {
+        "t": "Spark",
+        "v": 227
+      },
+      {
+        "t": "Power BI",
+        "v": 189
+      },
+      {
+        "t": "RAG",
+        "v": 176
+      },
+      {
+        "t": "Snowflake",
+        "v": 114
+      },
+      {
+        "t": "Langchain",
+        "v": 98
+      },
+      {
+        "t": "LangChain",
+        "v": 98
+      }
+    ],
+    "Databases": [
+      {
+        "t": "Oracle",
+        "v": 1998
+      },
+      {
+        "t": "SQL Server",
+        "v": 487
+      },
+      {
+        "t": "PostgreSQL",
+        "v": 411
+      },
+      {
+        "t": "MySQL",
+        "v": 259
+      },
+      {
+        "t": "MongoDB",
+        "v": 223
+      },
+      {
+        "t": "Redis",
+        "v": 93
+      },
+      {
+        "t": "DynamoDB",
+        "v": 57
+      },
+      {
+        "t": "Elasticsearch",
+        "v": 56
+      },
+      {
+        "t": "Firebase",
+        "v": 17
+      },
+      {
+        "t": "Cassandra",
+        "v": 16
       }
     ],
     "DevOps & Cloud": [
       {
         "t": "AWS",
-        "v": 572
-      },
-      {
-        "t": "CI/CD",
-        "v": 256
+        "v": 2297
       },
       {
         "t": "Azure",
-        "v": 218
+        "v": 837
       },
       {
-        "t": "Kubernetes",
-        "v": 208
-      },
-      {
-        "t": "Docker",
-        "v": 136
-      },
-      {
-        "t": "Apache",
-        "v": 94
-      },
-      {
-        "t": "ECS",
-        "v": 56
-      },
-      {
-        "t": "Jenkins",
-        "v": 53
-      },
-      {
-        "t": "S3",
-        "v": 46
-      },
-      {
-        "t": "EC2",
-        "v": 45
-      }
-    ],
-    "Ferramentas & Práticas": [
-      {
-        "t": "Agile",
-        "v": 998
-      },
-      {
-        "t": "Segurança",
-        "v": 719
+        "t": "CI/CD",
+        "v": 624
       },
       {
         "t": "Linux",
-        "v": 354
+        "v": 510
       },
       {
-        "t": "Git",
-        "v": 273
+        "t": "Kubernetes",
+        "v": 335
       },
       {
-        "t": "Cybersecurity",
-        "v": 182
+        "t": "Google Cloud",
+        "v": 254
       },
       {
-        "t": "Scrum",
-        "v": 180
+        "t": "Docker",
+        "v": 222
       },
       {
-        "t": "SOLID",
-        "v": 157
+        "t": "Apache",
+        "v": 167
       },
       {
-        "t": "Microsserviços",
-        "v": 141
+        "t": "Lambda",
+        "v": 134
       },
       {
-        "t": "Microservices",
-        "v": 136
-      },
-      {
-        "t": "SAFe",
-        "v": 82
+        "t": "GCP",
+        "v": 118
       }
     ],
-    "Frameworks & Libs Backend": [
-      {
-        "t": ".NET",
-        "v": 889
-      },
-      {
-        "t": "REST",
-        "v": 478
-      },
-      {
-        "t": "Spring",
-        "v": 331
-      },
-      {
-        "t": "Node.js",
-        "v": 298
-      },
-      {
-        "t": "RESTful",
-        "v": 237
-      },
-      {
-        "t": "Spring Boot",
-        "v": 186
-      },
-      {
-        "t": "Fiber",
-        "v": 178
-      },
-      {
-        "t": "Lumen",
-        "v": 172
-      },
-      {
-        "t": "ASP.NET",
-        "v": 133
-      },
-      {
-        "t": "Laravel",
-        "v": 129
-      }
-    ],
-    "Frameworks & Libs Web": [
-      {
-        "t": "React",
-        "v": 823
-      },
-      {
-        "t": "Angular",
-        "v": 581
-      },
-      {
-        "t": "Vue",
-        "v": 165
-      },
-      {
-        "t": "Next.js",
-        "v": 92
-      },
-      {
-        "t": "Vue.js",
-        "v": 78
-      },
-      {
-        "t": "jQuery",
-        "v": 72
-      },
-      {
-        "t": "Bootstrap",
-        "v": 65
-      },
-      {
-        "t": "Tailwind",
-        "v": 20
-      },
-      {
-        "t": "Tailwind CSS",
-        "v": 13
-      },
-      {
-        "t": "Nuxt",
-        "v": 4
-      }
-    ],
-    "Linguagens": [
+    "Languages": [
       {
         "t": "C",
-        "v": 1747
+        "v": 3978
       },
       {
         "t": "Java",
-        "v": 1410
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 1084
+        "v": 3910
       },
       {
         "t": "R",
-        "v": 826
+        "v": 2535
       },
       {
-        "t": "SQL",
-        "v": 750
+        "t": "JavaScript/TypeScript",
+        "v": 2121
       },
       {
         "t": "Python",
-        "v": 716
+        "v": 1879
+      },
+      {
+        "t": "SQL",
+        "v": 1771
       },
       {
         "t": "C#",
-        "v": 579
-      },
-      {
-        "t": "PHP",
-        "v": 337
-      },
-      {
-        "t": "C++",
-        "v": 310
+        "v": 1072
       },
       {
         "t": "Go",
-        "v": 118
+        "v": 1068
+      },
+      {
+        "t": "C++",
+        "v": 594
+      },
+      {
+        "t": "PHP",
+        "v": 432
       }
     ],
     "Mobile": [
       {
         "t": "Android",
-        "v": 220
+        "v": 1620
       },
       {
         "t": "iOS",
-        "v": 204
-      },
-      {
-        "t": "Flutter",
-        "v": 101
+        "v": 1526
       },
       {
         "t": "React Native",
-        "v": 97
+        "v": 262
       },
       {
         "t": "Swift",
-        "v": 87
+        "v": 213
+      },
+      {
+        "t": "Flutter",
+        "v": 197
       },
       {
         "t": "SwiftUI",
-        "v": 19
+        "v": 54
+      },
+      {
+        "t": "MAUI",
+        "v": 21
+      },
+      {
+        "t": "Jetpack Compose",
+        "v": 20
       },
       {
         "t": "Xamarin",
-        "v": 10
+        "v": 17
       },
       {
         "t": "Ionic",
-        "v": 9
-      },
-      {
-        "t": "Expo",
-        "v": 7
-      },
-      {
-        "t": "Cordova",
-        "v": 6
+        "v": 14
       }
-    ]
-  },
-  "porCategoriaBR": {
-    "Bancos de Dados": [
+    ],
+    "Tools & Practices": [
       {
-        "t": "SQL Server",
-        "v": 181
+        "t": "Segurança",
+        "v": 2060
       },
       {
-        "t": "MySQL",
-        "v": 143
+        "t": "Agile",
+        "v": 2002
       },
       {
-        "t": "Oracle",
-        "v": 118
+        "t": "Cybersecurity",
+        "v": 971
       },
       {
-        "t": "PostgreSQL",
+        "t": "SAFe",
+        "v": 842
+      },
+      {
+        "t": "Microservices",
+        "v": 758
+      },
+      {
+        "t": "Scrum",
+        "v": 393
+      },
+      {
+        "t": "Git",
+        "v": 391
+      },
+      {
+        "t": "SOLID",
+        "v": 380
+      },
+      {
+        "t": "Microsserviços",
+        "v": 164
+      },
+      {
+        "t": "GitHub",
+        "v": 152
+      }
+    ],
+    "Web Frameworks & Libs": [
+      {
+        "t": "React",
+        "v": 2074
+      },
+      {
+        "t": "Angular",
+        "v": 1305
+      },
+      {
+        "t": "Vue",
+        "v": 249
+      },
+      {
+        "t": "Next.js",
+        "v": 194
+      },
+      {
+        "t": "Vue.js",
+        "v": 124
+      },
+      {
+        "t": "Bootstrap",
+        "v": 109
+      },
+      {
+        "t": "jQuery",
         "v": 108
       },
       {
+        "t": "Tailwind",
+        "v": 39
+      },
+      {
+        "t": "Tailwind CSS",
+        "v": 27
+      },
+      {
+        "t": "Nuxt",
+        "v": 11
+      }
+    ]
+  },
+  "byCategoryBR": {
+    "Backend Frameworks & Libs": [
+      {
+        "t": ".NET",
+        "v": 667
+      },
+      {
+        "t": "REST",
+        "v": 481
+      },
+      {
+        "t": "Node.js",
+        "v": 271
+      },
+      {
+        "t": "Spring",
+        "v": 256
+      },
+      {
+        "t": "Spring Boot",
+        "v": 190
+      },
+      {
+        "t": "Laravel",
+        "v": 175
+      },
+      {
+        "t": "RESTful",
+        "v": 139
+      },
+      {
+        "t": "ASP.NET",
+        "v": 91
+      },
+      {
+        "t": "Express",
+        "v": 77
+      },
+      {
+        "t": "NestJS",
+        "v": 52
+      }
+    ],
+    "Data & AI": [
+      {
+        "t": "Power BI",
+        "v": 110
+      },
+      {
+        "t": "Machine Learning",
+        "v": 101
+      },
+      {
+        "t": "LLM",
+        "v": 69
+      },
+      {
+        "t": "Kafka",
+        "v": 59
+      },
+      {
+        "t": "Langchain",
+        "v": 51
+      },
+      {
+        "t": "LangChain",
+        "v": 51
+      },
+      {
+        "t": "RAG",
+        "v": 36
+      },
+      {
+        "t": "Deep Learning",
+        "v": 18
+      },
+      {
+        "t": "Databricks",
+        "v": 16
+      },
+      {
+        "t": "Airflow",
+        "v": 12
+      }
+    ],
+    "Databases": [
+      {
+        "t": "SQL Server",
+        "v": 226
+      },
+      {
+        "t": "MySQL",
+        "v": 186
+      },
+      {
+        "t": "Oracle",
+        "v": 186
+      },
+      {
+        "t": "PostgreSQL",
+        "v": 145
+      },
+      {
         "t": "MongoDB",
-        "v": 55
+        "v": 64
       },
       {
         "t": "Redis",
-        "v": 37
-      },
-      {
-        "t": "Elasticsearch",
-        "v": 11
+        "v": 41
       },
       {
         "t": "DynamoDB",
-        "v": 10
+        "v": 13
+      },
+      {
+        "t": "Elasticsearch",
+        "v": 13
       },
       {
         "t": "Firebase",
@@ -1332,631 +1416,555 @@
       },
       {
         "t": "MariaDB",
-        "v": 7
-      }
-    ],
-    "Dados & IA": [
-      {
-        "t": "Power BI",
-        "v": 55
-      },
-      {
-        "t": "Kafka",
-        "v": 51
-      },
-      {
-        "t": "Machine Learning",
-        "v": 43
-      },
-      {
-        "t": "RAG",
-        "v": 27
-      },
-      {
-        "t": "LLM",
-        "v": 9
-      },
-      {
-        "t": "TensorFlow",
         "v": 8
-      },
-      {
-        "t": "Databricks",
-        "v": 8
-      },
-      {
-        "t": "Deep Learning",
-        "v": 8
-      },
-      {
-        "t": "Airflow",
-        "v": 7
-      },
-      {
-        "t": "PyTorch",
-        "v": 7
       }
     ],
     "DevOps & Cloud": [
       {
         "t": "AWS",
-        "v": 221
+        "v": 375
       },
       {
         "t": "Azure",
-        "v": 116
+        "v": 169
       },
       {
         "t": "CI/CD",
-        "v": 110
-      },
-      {
-        "t": "Docker",
-        "v": 94
-      },
-      {
-        "t": "Kubernetes",
-        "v": 51
-      },
-      {
-        "t": "GCP",
-        "v": 36
-      },
-      {
-        "t": "Lambda",
-        "v": 29
-      },
-      {
-        "t": "Jenkins",
-        "v": 27
-      },
-      {
-        "t": "Grafana",
-        "v": 24
-      },
-      {
-        "t": "S3",
-        "v": 22
-      }
-    ],
-    "Ferramentas & Práticas": [
-      {
-        "t": "Segurança",
-        "v": 719
-      },
-      {
-        "t": "Git",
-        "v": 233
-      },
-      {
-        "t": "Microsserviços",
-        "v": 141
-      },
-      {
-        "t": "Scrum",
-        "v": 85
+        "v": 161
       },
       {
         "t": "Linux",
-        "v": 74
+        "v": 119
       },
       {
-        "t": "SOLID",
-        "v": 43
+        "t": "Docker",
+        "v": 105
       },
       {
-        "t": "Clean Code",
-        "v": 42
+        "t": "Kubernetes",
+        "v": 69
       },
       {
-        "t": "RabbitMQ",
-        "v": 38
+        "t": "GCP",
+        "v": 44
       },
       {
-        "t": "TDD",
-        "v": 35
+        "t": "Lambda",
+        "v": 32
       },
       {
-        "t": "GitHub",
-        "v": 33
+        "t": "Jenkins",
+        "v": 30
+      },
+      {
+        "t": "Grafana",
+        "v": 30
       }
     ],
-    "Frameworks & Libs Backend": [
-      {
-        "t": ".NET",
-        "v": 531
-      },
-      {
-        "t": "REST",
-        "v": 367
-      },
-      {
-        "t": "Node.js",
-        "v": 240
-      },
-      {
-        "t": "Spring",
-        "v": 174
-      },
-      {
-        "t": "Laravel",
-        "v": 124
-      },
-      {
-        "t": "RESTful",
-        "v": 122
-      },
-      {
-        "t": "Spring Boot",
-        "v": 118
-      },
-      {
-        "t": "ASP.NET",
-        "v": 80
-      },
-      {
-        "t": "GraphQL",
-        "v": 50
-      },
-      {
-        "t": "Rails",
-        "v": 42
-      }
-    ],
-    "Frameworks & Libs Web": [
-      {
-        "t": "React",
-        "v": 538
-      },
-      {
-        "t": "Angular",
-        "v": 367
-      },
-      {
-        "t": "Vue",
-        "v": 124
-      },
-      {
-        "t": "Next.js",
-        "v": 72
-      },
-      {
-        "t": "Vue.js",
-        "v": 62
-      },
-      {
-        "t": "Bootstrap",
-        "v": 45
-      },
-      {
-        "t": "jQuery",
-        "v": 39
-      },
-      {
-        "t": "Tailwind",
-        "v": 16
-      },
-      {
-        "t": "Tailwind CSS",
-        "v": 9
-      },
-      {
-        "t": "Nuxt",
-        "v": 4
-      }
-    ],
-    "Linguagens": [
+    "Languages": [
       {
         "t": "C",
-        "v": 1077
-      },
-      {
-        "t": "Java",
-        "v": 819
-      },
-      {
-        "t": "JavaScript/TypeScript",
-        "v": 689
+        "v": 1913
       },
       {
         "t": "R",
-        "v": 477
+        "v": 1563
+      },
+      {
+        "t": "Java",
+        "v": 1117
+      },
+      {
+        "t": "JavaScript/TypeScript",
+        "v": 927
       },
       {
         "t": "SQL",
-        "v": 459
+        "v": 713
       },
       {
         "t": "Python",
-        "v": 337
+        "v": 548
       },
       {
         "t": "C#",
-        "v": 326
+        "v": 421
       },
       {
         "t": "PHP",
-        "v": 255
+        "v": 358
+      },
+      {
+        "t": "Go",
+        "v": 192
       },
       {
         "t": "Kotlin",
-        "v": 104
-      },
-      {
-        "t": "COBOL",
-        "v": 70
+        "v": 114
       }
     ],
     "Mobile": [
       {
-        "t": "Android",
-        "v": 140
-      },
-      {
         "t": "iOS",
-        "v": 130
+        "v": 218
       },
       {
-        "t": "Flutter",
-        "v": 97
+        "t": "Android",
+        "v": 208
       },
       {
         "t": "React Native",
-        "v": 88
+        "v": 117
+      },
+      {
+        "t": "Flutter",
+        "v": 114
       },
       {
         "t": "Swift",
-        "v": 68
+        "v": 98
       },
       {
         "t": "SwiftUI",
-        "v": 19
+        "v": 28
       },
       {
         "t": "Xamarin",
-        "v": 9
+        "v": 10
       },
       {
         "t": "Ionic",
-        "v": 8
+        "v": 9
       },
       {
         "t": "Expo",
-        "v": 7
+        "v": 8
       },
       {
         "t": "MAUI",
         "v": 5
       }
-    ]
-  },
-  "porCategoriaEUA": {
-    "Bancos de Dados": [
+    ],
+    "Tools & Practices": [
       {
-        "t": "Oracle",
-        "v": 1791
+        "t": "Segurança",
+        "v": 2060
       },
       {
-        "t": "PostgreSQL",
-        "v": 106
+        "t": "Git",
+        "v": 269
       },
       {
-        "t": "SQL Server",
-        "v": 95
+        "t": "Scrum",
+        "v": 171
       },
       {
-        "t": "MySQL",
-        "v": 32
+        "t": "Microsserviços",
+        "v": 164
       },
       {
-        "t": "MongoDB",
+        "t": "Agile",
+        "v": 133
+      },
+      {
+        "t": "SOLID",
+        "v": 101
+      },
+      {
+        "t": "Postman",
+        "v": 54
+      },
+      {
+        "t": "GitHub",
+        "v": 53
+      },
+      {
+        "t": "Clean Code",
+        "v": 51
+      },
+      {
+        "t": "SAFe",
+        "v": 49
+      }
+    ],
+    "Web Frameworks & Libs": [
+      {
+        "t": "React",
+        "v": 766
+      },
+      {
+        "t": "Angular",
+        "v": 429
+      },
+      {
+        "t": "Vue",
+        "v": 150
+      },
+      {
+        "t": "Next.js",
+        "v": 88
+      },
+      {
+        "t": "Vue.js",
+        "v": 74
+      },
+      {
+        "t": "Bootstrap",
+        "v": 70
+      },
+      {
+        "t": "jQuery",
+        "v": 59
+      },
+      {
+        "t": "Tailwind",
         "v": 22
       },
       {
-        "t": "DynamoDB",
-        "v": 16
-      },
-      {
-        "t": "Elasticsearch",
-        "v": 9
-      },
-      {
-        "t": "Redis",
-        "v": 8
-      },
-      {
-        "t": "SQLite",
-        "v": 4
-      },
-      {
-        "t": "Cassandra",
-        "v": 3
-      }
-    ],
-    "Dados & IA": [
-      {
-        "t": "Machine Learning",
-        "v": 127
-      },
-      {
-        "t": "Kafka",
-        "v": 78
-      },
-      {
-        "t": "LLM",
-        "v": 71
-      },
-      {
-        "t": "Apache Kafka",
-        "v": 55
-      },
-      {
-        "t": "Airflow",
-        "v": 40
-      },
-      {
-        "t": "Spark",
-        "v": 20
-      },
-      {
-        "t": "Power BI",
-        "v": 19
-      },
-      {
-        "t": "Computer Vision",
+        "t": "Tailwind CSS",
         "v": 12
       },
       {
-        "t": "Deep Learning",
-        "v": 9
+        "t": "Nuxt",
+        "v": 4
+      }
+    ]
+  },
+  "byCategoryUSA": {
+    "Backend Frameworks & Libs": [
+      {
+        "t": ".NET",
+        "v": 1133
+      },
+      {
+        "t": "Spring",
+        "v": 747
+      },
+      {
+        "t": "Spring Boot",
+        "v": 510
+      },
+      {
+        "t": "REST",
+        "v": 505
+      },
+      {
+        "t": "RESTful",
+        "v": 432
+      },
+      {
+        "t": "Node.js",
+        "v": 416
+      },
+      {
+        "t": "Fiber",
+        "v": 387
+      },
+      {
+        "t": "Lumen",
+        "v": 347
+      },
+      {
+        "t": "Phoenix",
+        "v": 214
+      },
+      {
+        "t": "Rails",
+        "v": 156
+      }
+    ],
+    "Data & AI": [
+      {
+        "t": "Machine Learning",
+        "v": 1127
+      },
+      {
+        "t": "Databricks",
+        "v": 268
+      },
+      {
+        "t": "Kafka",
+        "v": 224
+      },
+      {
+        "t": "Spark",
+        "v": 217
+      },
+      {
+        "t": "LLM",
+        "v": 199
+      },
+      {
+        "t": "RAG",
+        "v": 140
       },
       {
         "t": "Snowflake",
-        "v": 8
+        "v": 109
+      },
+      {
+        "t": "OpenAI",
+        "v": 82
+      },
+      {
+        "t": "Apache Spark",
+        "v": 81
+      },
+      {
+        "t": "Power BI",
+        "v": 79
+      }
+    ],
+    "Databases": [
+      {
+        "t": "Oracle",
+        "v": 1812
+      },
+      {
+        "t": "PostgreSQL",
+        "v": 266
+      },
+      {
+        "t": "SQL Server",
+        "v": 261
+      },
+      {
+        "t": "MongoDB",
+        "v": 159
+      },
+      {
+        "t": "MySQL",
+        "v": 73
+      },
+      {
+        "t": "Redis",
+        "v": 52
+      },
+      {
+        "t": "DynamoDB",
+        "v": 44
+      },
+      {
+        "t": "Elasticsearch",
+        "v": 43
+      },
+      {
+        "t": "Cassandra",
+        "v": 13
+      },
+      {
+        "t": "Firebase",
+        "v": 9
       }
     ],
     "DevOps & Cloud": [
       {
         "t": "AWS",
-        "v": 351
-      },
-      {
-        "t": "Kubernetes",
-        "v": 157
-      },
-      {
-        "t": "CI/CD",
-        "v": 146
+        "v": 1922
       },
       {
         "t": "Azure",
-        "v": 102
+        "v": 668
       },
       {
-        "t": "Apache",
-        "v": 77
-      },
-      {
-        "t": "Docker",
-        "v": 42
-      },
-      {
-        "t": "ECS",
-        "v": 36
-      },
-      {
-        "t": "EC2",
-        "v": 34
-      },
-      {
-        "t": "Jenkins",
-        "v": 26
-      },
-      {
-        "t": "S3",
-        "v": 24
-      }
-    ],
-    "Ferramentas & Práticas": [
-      {
-        "t": "Agile",
-        "v": 972
+        "t": "CI/CD",
+        "v": 463
       },
       {
         "t": "Linux",
-        "v": 280
+        "v": 391
       },
       {
-        "t": "Cybersecurity",
-        "v": 181
+        "t": "Kubernetes",
+        "v": 266
       },
       {
-        "t": "Microservices",
-        "v": 123
+        "t": "Google Cloud",
+        "v": 239
       },
       {
-        "t": "SOLID",
-        "v": 114
+        "t": "Apache",
+        "v": 142
       },
       {
-        "t": "Scrum",
-        "v": 95
+        "t": "Docker",
+        "v": 117
       },
       {
-        "t": "SAFe",
-        "v": 77
+        "t": "Lambda",
+        "v": 102
       },
       {
-        "t": "Git",
-        "v": 40
-      },
-      {
-        "t": "GitLab",
-        "v": 32
-      },
-      {
-        "t": "Jira",
-        "v": 28
+        "t": "EC2",
+        "v": 96
       }
     ],
-    "Frameworks & Libs Backend": [
-      {
-        "t": ".NET",
-        "v": 358
-      },
-      {
-        "t": "Fiber",
-        "v": 177
-      },
-      {
-        "t": "Lumen",
-        "v": 172
-      },
-      {
-        "t": "Spring",
-        "v": 157
-      },
-      {
-        "t": "RESTful",
-        "v": 115
-      },
-      {
-        "t": "REST",
-        "v": 111
-      },
-      {
-        "t": "Spring Boot",
-        "v": 68
-      },
-      {
-        "t": "Node.js",
-        "v": 58
-      },
-      {
-        "t": "ASP.NET",
-        "v": 53
-      },
-      {
-        "t": "Phoenix",
-        "v": 44
-      }
-    ],
-    "Frameworks & Libs Web": [
-      {
-        "t": "React",
-        "v": 285
-      },
-      {
-        "t": "Angular",
-        "v": 214
-      },
-      {
-        "t": "Vue",
-        "v": 41
-      },
-      {
-        "t": "jQuery",
-        "v": 33
-      },
-      {
-        "t": "Bootstrap",
-        "v": 20
-      },
-      {
-        "t": "Next.js",
-        "v": 20
-      },
-      {
-        "t": "Vue.js",
-        "v": 16
-      },
-      {
-        "t": "Tailwind",
-        "v": 4
-      },
-      {
-        "t": "Tailwind CSS",
-        "v": 4
-      },
-      {
-        "t": "Astro",
-        "v": 3
-      }
-    ],
-    "Linguagens": [
-      {
-        "t": "C",
-        "v": 670
-      },
+    "Languages": [
       {
         "t": "Java",
-        "v": 591
+        "v": 2793
       },
       {
-        "t": "JavaScript/TypeScript",
-        "v": 395
+        "t": "C",
+        "v": 2065
       },
       {
         "t": "Python",
-        "v": 379
+        "v": 1331
       },
       {
-        "t": "R",
-        "v": 349
+        "t": "JavaScript/TypeScript",
+        "v": 1194
       },
       {
         "t": "SQL",
-        "v": 291
+        "v": 1058
       },
       {
-        "t": "C++",
-        "v": 262
-      },
-      {
-        "t": "C#",
-        "v": 253
-      },
-      {
-        "t": "PHP",
-        "v": 82
+        "t": "R",
+        "v": 972
       },
       {
         "t": "Go",
-        "v": 58
+        "v": 876
+      },
+      {
+        "t": "C#",
+        "v": 651
+      },
+      {
+        "t": "C++",
+        "v": 518
+      },
+      {
+        "t": "Ruby",
+        "v": 145
       }
     ],
     "Mobile": [
       {
         "t": "Android",
-        "v": 80
+        "v": 1412
       },
       {
         "t": "iOS",
-        "v": 74
-      },
-      {
-        "t": "Swift",
-        "v": 19
+        "v": 1308
       },
       {
         "t": "React Native",
-        "v": 9
+        "v": 145
+      },
+      {
+        "t": "Swift",
+        "v": 115
       },
       {
         "t": "Flutter",
-        "v": 4
+        "v": 83
+      },
+      {
+        "t": "SwiftUI",
+        "v": 26
+      },
+      {
+        "t": "Jetpack Compose",
+        "v": 18
+      },
+      {
+        "t": "MAUI",
+        "v": 16
       },
       {
         "t": "Cordova",
-        "v": 3
-      },
-      {
-        "t": "Ionic",
-        "v": 1
+        "v": 8
       },
       {
         "t": "Xamarin",
-        "v": 1
+        "v": 7
+      }
+    ],
+    "Tools & Practices": [
+      {
+        "t": "Agile",
+        "v": 1869
+      },
+      {
+        "t": "Cybersecurity",
+        "v": 924
+      },
+      {
+        "t": "SAFe",
+        "v": 793
+      },
+      {
+        "t": "Microservices",
+        "v": 725
+      },
+      {
+        "t": "SOLID",
+        "v": 279
+      },
+      {
+        "t": "Scrum",
+        "v": 222
+      },
+      {
+        "t": "Git",
+        "v": 122
+      },
+      {
+        "t": "GitHub",
+        "v": 99
+      },
+      {
+        "t": "Jira",
+        "v": 83
+      },
+      {
+        "t": "GitLab",
+        "v": 82
+      }
+    ],
+    "Web Frameworks & Libs": [
+      {
+        "t": "React",
+        "v": 1308
+      },
+      {
+        "t": "Angular",
+        "v": 876
+      },
+      {
+        "t": "Next.js",
+        "v": 106
+      },
+      {
+        "t": "Vue",
+        "v": 99
+      },
+      {
+        "t": "Vue.js",
+        "v": 50
+      },
+      {
+        "t": "jQuery",
+        "v": 49
+      },
+      {
+        "t": "Bootstrap",
+        "v": 39
+      },
+      {
+        "t": "Tailwind",
+        "v": 17
+      },
+      {
+        "t": "Tailwind CSS",
+        "v": 15
+      },
+      {
+        "t": "Nuxt",
+        "v": 7
       }
     ]
   }
