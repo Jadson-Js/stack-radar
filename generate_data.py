@@ -9,7 +9,7 @@ import re
 from collections import defaultdict
 import pandas as pd
 
-XLSX_PATH = "analise_mercado_br_eua_v2.xlsx"
+XLSX_PATH = "analise_mercado_br_eua_v4.xlsx"
 OUTPUT_PATH = "data.json"
 TOP_N = 15        # número de itens nos rankings
 TOP_CAT = 10      # itens por categoria

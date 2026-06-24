@@ -11,62 +11,54 @@ from openpyxl.utils import get_column_letter
 from openpyxl.formatting.rule import ColorScaleRule
 from dotenv import load_dotenv
 
-# Carrega as variáveis de ambiente do arquivo .env
+# Load environment variables from .env file
 load_dotenv()
 
 # ==========================================
-# 1. Configurações e Credenciais
+# 1. Configuration and Credentials
 # ==========================================
 APP_ID  = os.getenv('APP_ID')
 APP_KEY = os.getenv('APP_KEY')
 
-DIAS_ATRAS        = 365
-PAGINAS_POR_BUSCA = 100
-MAX_WORKERS       = 2
-RETRY_ATTEMPTS    = 3
-RETRY_DELAY       = 5
+DAYS_AGO       = 365
+MAX_WORKERS    = 2
+RETRY_ATTEMPTS = 3
+RETRY_DELAY    = 5
+JOB_LIMIT      = 150_000
 
-PAISES: dict[str, dict] = {
+# Safety locks for dynamic pagination
+MAX_PAGES_PER_TERM = 150  # Prevents infinite requests if anti-loop fails
+MAX_CONSECUTIVE_FAILURES = 3  # Tolerates up to 3 consecutive empty/failed pages
+MAX_CONSECUTIVE_SATURATION = 2 # Tolerates up to 2 full pages with 100% duplicate jobs
+
+COUNTRIES: dict[str, dict] = {
     'br': {
-        'nome': 'Brasil',
-        'termos': [
-            'desenvolvedor',
-            'developer',
-            'programador',
-            'engenheiro de software',
-            'software engineer',
-            'web developer',
-            'analista de sistemas',
-            'pessoa desenvolvedora',
-            'desenvolvedor fullstack',
-            'desenvolvedor backend',
-            'desenvolvedor frontend',
-            'desenvolvedor mobile',
-            'arquiteto de software',
+        'name': 'Brazil',
+        'terms': [
+            'desenvolvedor', 'developer', 'programador', 'engenheiro de software',
+            'software engineer', 'web developer', 'analista de sistemas',
+            'pessoa desenvolvedora', 'dev', 'desenvolvedor fullstack',
+            'desenvolvedor backend', 'desenvolvedor frontend', 'desenvolvedor mobile',
+            'full stack developer', 'backend developer', 'frontend developer',
+            'arquiteto de software', 'software architect', 'tech lead',
+            'líder técnico', 'analista de TI', 'analista desenvolvedor',
         ],
     },
     'us': {
-        'nome': 'EUA',
-        'termos': [
-            'software engineer',
-            'software developer',
-            'web developer',
-            'backend developer',
-            'frontend developer',
-            'full stack developer',
-            'mobile developer',
-            'systems analyst',
-            'cloud engineer',
-            'devops engineer',
-            'data engineer',
-            'machine learning engineer',
-            'platform engineer',
+        'name': 'USA',
+        'terms': [
+            'developer', 'software engineer', 'web developer', 'application developer',
+            'computer programmer', 'backend developer', 'backend engineer',
+            'frontend developer', 'frontend engineer', 'full stack developer',
+            'full stack engineer', 'mobile developer', 'ios developer',
+            'android developer', 'software architect', 'solutions architect',
+            'tech lead', 'engineering manager',
         ],
     },
 }
 
 # ==========================================
-# 2. Classificação de nível
+# 2. Level Classification
 # ==========================================
 _SENIOR_RE = re.compile(
     r's[eê]nior|sr\.?\s|pleno|mid[\s\-]?level|staff\s+engineer|lead\s+engineer|'
@@ -78,53 +70,50 @@ _JUNIOR_RE = re.compile(
     r'early[\s\-]?career|associate\s+engineer|associate\s+developer',
     re.IGNORECASE
 )
-_ESTAGIO_RE = re.compile(
+_INTERNSHIP_RE = re.compile(
     r'est[aá]gi[oá]rio?|est[aá]gio|intern(ship)?|trainee|aprendiz|co[\s\-]?op',
     re.IGNORECASE
 )
 
-TODOS_OS_NIVEIS = ('Junior', 'Estágio/Intern', 'Pleno', 'Sênior', 'Geral')
+ALL_LEVELS = ('Junior', 'Internship', 'Mid-level', 'Senior', 'General')
 
-def classificar_nivel(texto: str) -> str:
-    if _ESTAGIO_RE.search(texto):
-        return 'Estágio/Intern'
-    if _JUNIOR_RE.search(texto):
+def classify_level(text: str) -> str:
+    if _INTERNSHIP_RE.search(text):
+        return 'Internship'
+    if _JUNIOR_RE.search(text):
         return 'Junior'
-    if _SENIOR_RE.search(texto):
-        # Diferencia pleno de sênior
-        if re.search(r'pleno|mid[\s\-]?level', texto, re.IGNORECASE):
-            return 'Pleno'
-        return 'Sênior'
-    return 'Geral'
+    if _SENIOR_RE.search(text):
+        if re.search(r'pleno|mid[\s\-]?level', text, re.IGNORECASE):
+            return 'Mid-level'
+        return 'Senior'
+    return 'General'
 
 # ==========================================
-# 3. Dicionário de Categorias (EXPANDIDO)
+# 3. Categories and Aliases Dictionary
 # ==========================================
-CATEGORIAS = {
-    'Linguagens': [
+CATEGORIES = {
+    'Languages': [
         'JavaScript', 'Python', 'Java', 'C#', 'TypeScript', 'PHP', 'Ruby',
         'Golang', 'Go', 'Rust', 'Kotlin', 'Swift', 'C++', 'C', 'SQL', 'Dart',
         'Scala', 'R', 'COBOL', 'Perl', 'Elixir', 'Haskell', 'Lua', 'Shell',
         'Bash', 'PowerShell', 'Groovy', 'Clojure', 'F#', 'Objective-C',
         'Assembly', 'MATLAB', 'Julia',
     ],
-    'Frameworks & Libs Web': [
+    'Web Frameworks & Libs': [
         'React', 'Angular', 'Vue.js', 'Vue', 'Next.js', 'Nuxt.js', 'Nuxt',
         'Svelte', 'SvelteKit', 'Gatsby', 'Remix', 'Astro', 'Solid.js',
         'jQuery', 'Bootstrap', 'Tailwind', 'Tailwind CSS', 'Material UI',
         'Chakra UI', 'Ant Design', 'shadcn', 'Storybook',
     ],
-    'Frameworks & Libs Backend': [
+    'Backend Frameworks & Libs': [
         'Node.js', 'Express', 'NestJS', 'Fastify', 'Koa',
         'Spring Boot', 'Spring', 'Spring MVC', 'Spring Security', 'Spring Cloud',
         'Django', 'Flask', 'FastAPI', 'Celery', 'SQLAlchemy',
         'Laravel', 'Symfony', 'CodeIgniter', 'Lumen',
         '.NET', 'ASP.NET', 'Entity Framework', 'Blazor',
         'Rails', 'Ruby on Rails', 'Sinatra',
-        'Gin', 'Fiber', 'Echo',
-        'Actix', 'Rocket',
-        'Ktor', 'Micronaut', 'Quarkus',
-        'Phoenix', 'Elixir Phoenix',
+        'Gin', 'Fiber', 'Echo', 'Actix', 'Rocket',
+        'Ktor', 'Micronaut', 'Quarkus', 'Phoenix', 'Elixir Phoenix',
         'gRPC', 'GraphQL', 'REST', 'RESTful',
     ],
     'Mobile': [
@@ -132,7 +121,7 @@ CATEGORIAS = {
         'Android', 'iOS', 'Swift', 'SwiftUI', 'Jetpack Compose',
         'Expo', 'Capacitor', 'Cordova',
     ],
-    'Dados & IA': [
+    'Data & AI': [
         'TensorFlow', 'PyTorch', 'Keras', 'scikit-learn', 'Pandas',
         'NumPy', 'Spark', 'Apache Spark', 'Kafka', 'Apache Kafka',
         'Airflow', 'Apache Airflow', 'dbt', 'Hadoop', 'Hive',
@@ -142,7 +131,7 @@ CATEGORIAS = {
         'Machine Learning', 'Deep Learning', 'NLP', 'Computer Vision',
         'Jupyter', 'Matplotlib', 'Seaborn', 'Plotly',
     ],
-    'Bancos de Dados': [
+    'Databases': [
         'PostgreSQL', 'MySQL', 'MongoDB', 'Redis', 'Oracle', 'SQL Server',
         'MariaDB', 'SQLite', 'Cassandra', 'DynamoDB', 'Elasticsearch',
         'Neo4j', 'CouchDB', 'InfluxDB', 'TimescaleDB', 'Supabase',
@@ -155,17 +144,14 @@ CATEGORIAS = {
         'Terraform', 'Ansible', 'Puppet', 'Chef', 'Pulumi',
         'Linux', 'Unix', 'Nginx', 'Apache', 'Caddy',
         'Prometheus', 'Grafana', 'Datadog', 'Sentry', 'New Relic', 'Splunk',
-        'CloudFormation', 'CDK', 'SAM',
-        'Lambda', 'ECS', 'EKS', 'S3', 'RDS', 'EC2',
+        'CloudFormation', 'CDK', 'SAM', 'Lambda', 'ECS', 'EKS', 'S3', 'RDS', 'EC2',
         'Azure DevOps', 'Azure Kubernetes', 'AKS', 'GKE',
     ],
-    'Ferramentas & Práticas': [
-        'Git', 'GitHub', 'GitLab', 'Bitbucket',
-        'Jira', 'Confluence', 'Trello', 'Notion',
-        'Scrum', 'Agile', 'Kanban', 'SAFe', 'XP',
-        'TDD', 'BDD', 'DDD', 'SOLID', 'Clean Architecture', 'Clean Code',
-        'Microservices', 'Microsserviços', 'Monorepo', 'Serverless',
-        'OpenAPI', 'Swagger', 'Postman', 'Insomnia',
+    'Tools & Practices': [
+        'Git', 'GitHub', 'GitLab', 'Bitbucket', 'Jira', 'Confluence', 'Trello', 'Notion',
+        'Scrum', 'Agile', 'Kanban', 'SAFe', 'XP', 'TDD', 'BDD', 'DDD', 'SOLID', 
+        'Clean Architecture', 'Clean Code', 'Microservices', 'Microsserviços', 
+        'Monorepo', 'Serverless', 'OpenAPI', 'Swagger', 'Postman', 'Insomnia',
         'WebSockets', 'WebSocket', 'MQTT', 'RabbitMQ', 'ActiveMQ', 'SQS',
         'OAuth', 'JWT', 'OpenID', 'SAML', 'SSO',
         'OWASP', 'Cybersecurity', 'Segurança', 'Penetration Testing',
@@ -173,495 +159,438 @@ CATEGORIAS = {
     ],
 }
 
-STACK_PARA_CAT = {
-    stack: cat
-    for cat, stacks in CATEGORIAS.items()
-    for stack in stacks
+STACK_TO_CAT = {stack: cat for cat, stacks in CATEGORIES.items() for stack in stacks}
+
+STACK_ALIASES: dict[str, str] = {
+    'JavaScript': 'JavaScript/TypeScript',
+    'TypeScript': 'JavaScript/TypeScript',
 }
 
+for _alias, _canonical in STACK_ALIASES.items():
+    if _canonical not in STACK_TO_CAT and _alias in STACK_TO_CAT:
+        STACK_TO_CAT[_canonical] = STACK_TO_CAT[_alias]
+
 # ==========================================
-# 4. Regex compiladas
+# 4. Regex Compilation
 # ==========================================
-def _compilar_regex(keyword: str) -> re.Pattern:
+def _compile_regex(keyword: str) -> re.Pattern:
     escaped = re.escape(keyword)
-    # Para termos com espaços (ex: "Spring Boot"), busca flexível
     if ' ' in keyword:
         escaped = r'\s+'.join(re.escape(p) for p in keyword.split())
     return re.compile(rf'(?i)(?<![a-z0-9]){escaped}(?![a-z0-9])')
 
 REGEX_MAP: dict[str, re.Pattern] = {
-    stack: _compilar_regex(stack) for stack in STACK_PARA_CAT
+    stack: _compile_regex(stack)
+    for stack in STACK_TO_CAT
+    if stack not in STACK_ALIASES.values()
 }
 
-_REMOTO_RE = re.compile(r'remoto|home[\s\-]?office|remote|distributed|anywhere', re.IGNORECASE)
-_HIBRIDO_RE = re.compile(r'híbrido|híbrida|hybrid', re.IGNORECASE)
+_REMOTE_RE = re.compile(r'remoto|home[\s\-]?office|remote|distributed|anywhere', re.IGNORECASE)
+_HYBRID_RE = re.compile(r'híbrido|híbrida|hybrid', re.IGNORECASE)
 
 # ==========================================
-# 5. Busca com retry e paralelismo
+# 5. Defensive Search Engine
 # ==========================================
-def _buscar_pagina(country: str, termo: str, page: int) -> list[dict]:
+def _fetch_page(country: str, term: str, page: int) -> list[dict] | None:
+    """Returns a list of jobs. Returns None ONLY if the request fails completely."""
     url = f"https://api.adzuna.com/v1/api/jobs/{country}/search/{page}"
     params = {
-        'app_id': APP_ID,
-        'app_key': APP_KEY,
-        'what': termo,
-        'max_days_old': DIAS_ATRAS,
-        'results_per_page': 50,
+        'app_id': APP_ID, 'app_key': APP_KEY, 'what': term,
+        'max_days_old': DAYS_AGO, 'results_per_page': 50,
     }
-    for tentativa in range(1, RETRY_ATTEMPTS + 1):
+    for attempt in range(1, RETRY_ATTEMPTS + 1):
         try:
             resp = requests.get(url, params=params, timeout=15)
             if resp.status_code in (429, 503):
-                wait = RETRY_DELAY * tentativa
-                print(f"  ⚠ [{country.upper()}] '{termo}' p{page:>2} — {resp.status_code}, aguardando {wait}s (tentativa {tentativa}/{RETRY_ATTEMPTS})")
+                wait = RETRY_DELAY * attempt
+                print(f"  ! [{country.upper()}] p{page:>3} — {resp.status_code}, waiting {wait}s")
                 time.sleep(wait)
                 continue
             resp.raise_for_status()
-            resultados = resp.json().get('results', [])
-            print(f"  ✓ [{country.upper()}] '{termo[:20]:<20}' p{page:>2} — {len(resultados)} vagas")
-            return resultados
-        except requests.exceptions.HTTPError as exc:
-            print(f"  ✗ [{country.upper()}] p{page:>2} — HTTP: {exc}")
-            break
+            results = resp.json().get('results', [])
+            print(f"  * [{country.upper()}] '{term[:20]:<20}' p{page:>3} — {len(results)} jobs")
+            return results
         except Exception as exc:
-            print(f"  ✗ [{country.upper()}] p{page:>2} — erro: {exc}")
-            if tentativa < RETRY_ATTEMPTS:
+            print(f"  x [{country.upper()}] p{page:>3} — error: {exc}")
+            if attempt < RETRY_ATTEMPTS:
                 time.sleep(RETRY_DELAY)
-    return []
+    return None
 
+def get_country_jobs(country: str, terms: list[str], global_jobs: dict[str, dict]) -> dict[str, dict]:
+    country_jobs: dict[str, dict] = {}
 
-def obter_vagas_pais(country: str, termos: list[str]) -> dict[str, dict]:
-    vagas: dict[str, dict] = {}
-    for termo in termos:
-        print(f"\n  🔍 Buscando '{termo}' ({PAGINAS_POR_BUSCA} págs)...")
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-            futures = {
-                pool.submit(_buscar_pagina, country, termo, p): p
-                for p in range(1, PAGINAS_POR_BUSCA + 1)
-            }
-            for fut in as_completed(futures):
-                for vaga in fut.result():
-                    vid = vaga.get('id') or vaga.get('redirect_url', '')
-                    if vid and vid not in vagas:
-                        vagas[vid] = vaga
-    print(f"\n  → {len(vagas)} vagas únicas para {country.upper()}")
-    return vagas
+    for term in terms:
+        if len(global_jobs) >= JOB_LIMIT:
+            print(f"\n  [!] Global limit reached. Stopping collection.")
+            break
+
+        print(f"\n  > Searching '{term}' (Safe Pagination)...")
+        page = 1
+        consecutive_failures = 0
+        consecutive_saturation = 0
+        term_interrupted = False
+
+        while page <= MAX_PAGES_PER_TERM:
+            if len(global_jobs) >= JOB_LIMIT:
+                term_interrupted = True
+                break
+
+            page_batch = list(range(page, page + MAX_WORKERS))
+            batch_results: dict[int, list[dict] | None] = {}
+
+            with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+                futures = {pool.submit(_fetch_page, country, term, p): p for p in page_batch}
+                for fut in as_completed(futures):
+                    batch_results[futures[fut]] = fut.result()
+
+            stop_term = False
+            for p in page_batch:
+                results = batch_results.get(p)
+
+                # Handling 1: API Error (None) or actually empty page ([])
+                if not results: 
+                    consecutive_failures += 1
+                    if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
+                        print(f"  - '{term}' — {consecutive_failures} consecutive failures/empty pages. Terminating term.")
+                        stop_term = True
+                        break
+                    continue
+                else:
+                    consecutive_failures = 0 # Reset failure counter
+
+                # Handling 2: Saturation and global duplicates
+                new_on_this_page = 0
+                for job in results:
+                    jid = job.get('id') or job.get('redirect_url', '')
+                    if jid:
+                        if jid not in global_jobs:
+                            global_jobs[jid] = job
+                            new_on_this_page += 1
+                        # Add to country even if it's a global duplicate (e.g., BR and US sharing)
+                        if jid not in country_jobs:
+                            country_jobs[jid] = job
+
+                if new_on_this_page == 0:
+                    consecutive_saturation += 1
+                    if consecutive_saturation >= MAX_CONSECUTIVE_SATURATION:
+                        print(f"  - '{term}' — API Loop detected (only duplicate jobs). Terminating term.")
+                        stop_term = True
+                        break
+                else:
+                    consecutive_saturation = 0
+
+                if len(global_jobs) >= JOB_LIMIT:
+                    stop_term = True
+                    term_interrupted = True
+                    break
+
+            if stop_term or term_interrupted:
+                break
+            page += MAX_WORKERS
+
+        if page > MAX_PAGES_PER_TERM:
+            print(f"  - '{term}' reached the safety limit ({MAX_PAGES_PER_TERM} pages).")
+
+        print(f"  -> Unique jobs in country: {len(country_jobs):,} | Global: {len(global_jobs):,}")
+
+    return country_jobs
 
 # ==========================================
-# 6. Processamento
+# 6. Processing
 # ==========================================
-def _modalidade(texto: str, loc: str) -> str:
-    if _REMOTO_RE.search(texto) or 'remote' in loc:
-        return 'Remoto'
-    if _HIBRIDO_RE.search(texto):
-        return 'Híbrido'
-    return 'Presencial'
+def _work_model(text: str, loc: str) -> str:
+    if _REMOTE_RE.search(text) or 'remote' in loc:
+        return 'Remote'
+    if _HYBRID_RE.search(text):
+        return 'Hybrid'
+    return 'On-site'
 
-
-def processar_pais(country: str, vagas: dict[str, dict]) -> tuple[list[dict], dict[str, int]]:
-    # Estrutura: nivel -> stack -> modalidade -> count
-    contagem: dict[str, dict] = {
-        nivel: defaultdict(lambda: {'Total': 0, 'Remoto': 0, 'Híbrido': 0, 'Presencial': 0})
-        for nivel in TODOS_OS_NIVEIS
+def process_country(country: str, jobs: dict[str, dict]) -> tuple[list[dict], dict[str, int]]:
+    counts: dict[str, dict] = {
+        level: defaultdict(lambda: {'Total': 0, 'Remote': 0, 'Hybrid': 0, 'On-site': 0})
+        for level in ALL_LEVELS
     }
-    dist: dict[str, int] = defaultdict(int)
+    distribution: dict[str, int] = defaultdict(int)
 
-    for vaga in vagas.values():
-        titulo = vaga.get('title', '')
-        descricao = vaga.get('description', '') or ''
-        texto = f"{titulo} {descricao}"
-        nivel = classificar_nivel(texto)
-        dist[nivel] += 1
-
-        loc = vaga.get('location', {}).get('display_name', '').lower()
-        modalidade = _modalidade(texto, loc)
+    for job in jobs.values():
+        title = job.get('title', '')
+        description = job.get('description', '') or ''
+        text = f"{title} {description}"
+        level = classify_level(text)
+        distribution[level] += 1
+        loc = job.get('location', {}).get('display_name', '').lower()
+        model = _work_model(text, loc)
 
         for stack, rx in REGEX_MAP.items():
-            if rx.search(texto):
-                contagem[nivel][stack]['Total'] += 1
-                contagem[nivel][stack][modalidade] += 1
+            if rx.search(text):
+                canonical = STACK_ALIASES.get(stack, stack)
+                counts[level][canonical]['Total'] += 1
+                counts[level][canonical][model] += 1
 
-    dados: list[dict] = []
-    for nivel in TODOS_OS_NIVEIS:
-        for stack, info in contagem[nivel].items():
+    data: list[dict] = []
+    for level in ALL_LEVELS:
+        for stack, info in counts[level].items():
             if info['Total'] > 0:
-                dados.append({
-                    'País':          PAISES[country]['nome'],
-                    'Nível':         nivel,
-                    'Categoria':     STACK_PARA_CAT[stack],
-                    'Tecnologia':    stack,
-                    'Total':         info['Total'],
-                    'Remoto':        info['Remoto'],
-                    'Híbrido':       info['Híbrido'],
-                    'Presencial':    info['Presencial'],
-                    '% Remoto':      round(info['Remoto'] / info['Total'] * 100, 1) if info['Total'] else 0,
+                data.append({
+                    'Country':    COUNTRIES[country]['name'],
+                    'Level':      level,
+                    'Category':   STACK_TO_CAT[stack],
+                    'Technology': stack,
+                    'Total':      info['Total'],
+                    'Remote':     info['Remote'],
+                    'Hybrid':     info['Hybrid'],
+                    'On-site':    info['On-site'],
+                    '% Remote':   round(info['Remote'] / info['Total'] * 100, 1) if info['Total'] else 0,
                 })
-
-    return dados, dist
+    return data, distribution
 
 # ==========================================
-# 7. Relatório no terminal
+# 7. Terminal Report
 # ==========================================
-def imprimir_relatorio(df: pd.DataFrame, nome_pais: str) -> None:
-    df_pais = df[df['País'] == nome_pais]
-    print(f"\n\n{'#'*60}")
-    print(f"#  🌎  MERCADO: {nome_pais.upper()}")
-    print(f"{'#'*60}")
-    for nivel in TODOS_OS_NIVEIS:
-        df_nivel = df_pais[df_pais['Nível'] == nivel]
-        if df_nivel.empty:
-            continue
-        print(f"\n{'='*60}")
-        print(f"📊  {nivel.upper()}")
-        print(f"{'='*60}")
-        for cat in CATEGORIAS:
-            df_cat = (
-                df_nivel[df_nivel['Categoria'] == cat]
-                .sort_values('Total', ascending=False)
-                .head(10)
-            )
+def print_report(df: pd.DataFrame, country_name: str) -> None:
+    df_country = df[df['Country'] == country_name]
+    print(f"\n\n{'#'*60}\n#  MARKET: {country_name.upper()}\n{'#'*60}")
+    for level in ALL_LEVELS:
+        df_level = df_country[df_country['Level'] == level]
+        if df_level.empty: continue
+        print(f"\n{'='*60}\n  {level.upper()}\n{'='*60}")
+        for cat in CATEGORIES:
+            df_cat = df_level[df_level['Category'] == cat].sort_values('Total', ascending=False).head(10)
             if not df_cat.empty:
                 print(f"\n--- TOP: {cat.upper()} ---")
-                print(df_cat[['Tecnologia', 'Total', 'Remoto', 'Híbrido', 'Presencial', '% Remoto']].to_string(index=False))
+                print(df_cat[['Technology', 'Total', 'Remote', 'Hybrid', 'On-site', '% Remote']].to_string(index=False))
 
 # ==========================================
-# 8. Excel rico com openpyxl
+# 8. Excel Exporting
 # ==========================================
-
-# Paleta de cores
-COR_HEADER      = 'FF1F3864'  # azul escuro
-COR_HEADER_FONT = 'FFFFFFFF'  # branco
-COR_NIVEL = {
-    'Sênior':       'FF2E75B6',
-    'Pleno':        'FF2E86C1',
-    'Junior':       'FF1E8449',
-    'Estágio/Intern': 'FF8E44AD',
-    'Geral':        'FF555555',
+LEVEL_COLORS = {
+    'Senior': 'FF2E75B6', 'Mid-level': 'FF2E86C1', 'Junior': 'FF1E8449',
+    'Internship': 'FF8E44AD', 'General': 'FF555555',
 }
-COR_ALT_ROW = 'FFF2F2F2'
-
-THIN = Side(style='thin', color='FFCCCCCC')
-BORDER = Border(left=THIN, right=THIN, top=THIN, bottom=THIN)
-
+ALT_ROW_COLOR = 'FFF2F2F2'
+THIN_BORDER = Side(style='thin', color='FFCCCCCC')
+BORDER_STYLE = Border(left=THIN_BORDER, right=THIN_BORDER, top=THIN_BORDER, bottom=THIN_BORDER)
 
 def _header_style(cell, bg='FF1F3864', fg='FFFFFFFF', bold=True, size=10):
     cell.font = Font(name='Arial', bold=bold, color=fg, size=size)
     cell.fill = PatternFill('solid', start_color=bg)
     cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
-    cell.border = BORDER
-
+    cell.border = BORDER_STYLE
 
 def _data_style(cell, alt=False, bold=False, align='center'):
     cell.font = Font(name='Arial', size=9, bold=bold)
-    if alt:
-        cell.fill = PatternFill('solid', start_color=COR_ALT_ROW)
+    if alt: cell.fill = PatternFill('solid', start_color=ALT_ROW_COLOR)
     cell.alignment = Alignment(horizontal=align, vertical='center')
-    cell.border = BORDER
-
+    cell.border = BORDER_STYLE
 
 def _auto_width(ws, extra=4):
     for col in ws.columns:
-        max_len = 0
-        col_letter = get_column_letter(col[0].column)
+        max_len, col_letter = 0, get_column_letter(col[0].column)
         for cell in col:
             try:
-                if cell.value:
-                    max_len = max(max_len, len(str(cell.value)))
-            except Exception:
-                pass
+                if cell.value: max_len = max(max_len, len(str(cell.value)))
+            except Exception: pass
         ws.column_dimensions[col_letter].width = min(max_len + extra, 50)
 
-
-def _criar_aba_pais(wb: Workbook, df_pais: pd.DataFrame, nome_pais: str):
-    ws = wb.create_sheet(nome_pais)
+def _create_country_sheet(wb: Workbook, df_country: pd.DataFrame, country_name: str):
+    ws = wb.create_sheet(country_name)
     ws.freeze_panes = 'A3'
-
-    # Título
     ws.merge_cells('A1:I1')
-    titulo = ws['A1']
-    titulo.value = f'📊 Análise de Mercado — {nome_pais} (últimos {DIAS_ATRAS} dias)'
-    titulo.font = Font(name='Arial', bold=True, size=13, color='FFFFFFFF')
-    titulo.fill = PatternFill('solid', start_color='FF1F3864')
-    titulo.alignment = Alignment(horizontal='center', vertical='center')
+    title_cell = ws['A1']
+    title_cell.value = f'Market Analysis — {country_name} (last {DAYS_AGO} days)'
+    title_cell.font, title_cell.fill = Font(name='Arial', bold=True, size=13, color='FFFFFFFF'), PatternFill('solid', start_color='FF1F3864')
+    title_cell.alignment = Alignment(horizontal='center', vertical='center')
     ws.row_dimensions[1].height = 28
 
-    # Cabeçalho
-    headers = ['Nível', 'Categoria', 'Tecnologia', 'Total', 'Remoto', 'Híbrido', 'Presencial', '% Remoto', 'Rank por Categoria']
-    for col, h in enumerate(headers, 1):
-        c = ws.cell(row=2, column=col, value=h)
-        _header_style(c)
+    headers = ['Level', 'Category', 'Technology', 'Total', 'Remote', 'Hybrid', 'On-site', '% Remote', 'Rank by Category']
+    for col, header in enumerate(headers, 1): _header_style(ws.cell(row=2, column=col, value=header))
     ws.row_dimensions[2].height = 22
 
-    # Dados ordenados
-    df_sorted = df_pais.sort_values(['Nível', 'Categoria', 'Total'], ascending=[True, True, False])
-
-    row = 3
-    for _, r in df_sorted.iterrows():
-        alt = (row % 2 == 0)
-        nivel_cor = COR_NIVEL.get(r['Nível'], 'FF555555')
-        values = [r['Nível'], r['Categoria'], r['Tecnologia'],
-                  r['Total'], r['Remoto'], r['Híbrido'], r['Presencial'], r['% Remoto'], '']
-        for col, val in enumerate(values, 1):
-            c = ws.cell(row=row, column=col, value=val)
-            _data_style(c, alt=alt, align='left' if col in (1,2,3) else 'center')
-            if col == 1:  # Cor por nível
-                c.font = Font(name='Arial', size=9, bold=True, color=nivel_cor)
-            if col == 8:
-                c.number_format = '0.0"%"'
-        row += 1
-
-    # Rank por categoria (coluna I) — fórmula RANK dentro do grupo é complexo; usamos rank via pandas
-    # Adicionamos rank como dado pré-calculado
-    row = 3
-    for _, r in df_sorted.iterrows():
-        # Rank dentro do mesmo nível+categoria
-        subset = df_sorted[(df_sorted['Nível'] == r['Nível']) & (df_sorted['Categoria'] == r['Categoria'])]
-        rank = list(subset['Tecnologia']).index(r['Tecnologia']) + 1
-        c = ws.cell(row=row, column=9, value=f"#{rank}")
-        _data_style(c, alt=(row % 2 == 0))
-        row += 1
-
-    # Heatmap na coluna Total
-    if row > 3:
-        ws.conditional_formatting.add(
-            f'D3:D{row-1}',
-            ColorScaleRule(
-                start_type='min', start_color='FFFFFFFF',
-                end_type='max',   end_color='FF1F3864'
-            )
-        )
-
-    _auto_width(ws)
-    ws.column_dimensions['A'].width = 16
-    ws.column_dimensions['B'].width = 24
-    ws.column_dimensions['C'].width = 22
-
-
-def _criar_aba_todos(wb: Workbook, df: pd.DataFrame):
-    ws = wb.create_sheet('Todos os Dados', 0)
-    ws.freeze_panes = 'A3'
-
-    ws.merge_cells('A1:J1')
-    t = ws['A1']
-    t.value = f'🌎 Análise Completa — Brasil + EUA | Todos os Níveis e Tecnologias'
-    t.font = Font(name='Arial', bold=True, size=13, color='FFFFFFFF')
-    t.fill = PatternFill('solid', start_color='FF1F3864')
-    t.alignment = Alignment(horizontal='center', vertical='center')
-    ws.row_dimensions[1].height = 28
-
-    headers = ['País', 'Nível', 'Categoria', 'Tecnologia', 'Total', 'Remoto', 'Híbrido', 'Presencial', '% Remoto']
-    for col, h in enumerate(headers, 1):
-        c = ws.cell(row=2, column=col, value=h)
-        _header_style(c)
-    ws.row_dimensions[2].height = 22
-
-    df_sorted = df.sort_values(['País', 'Nível', 'Categoria', 'Total'], ascending=[True, True, True, False])
-    for row, (_, r) in enumerate(df_sorted.iterrows(), start=3):
-        alt = (row % 2 == 0)
-        for col, val in enumerate([r['País'], r['Nível'], r['Categoria'], r['Tecnologia'],
-                                    r['Total'], r['Remoto'], r['Híbrido'], r['Presencial'], r['% Remoto']], 1):
-            c = ws.cell(row=row, column=col, value=val)
-            _data_style(c, alt=alt, align='left' if col <= 4 else 'center')
-            if col == 2:
-                c.font = Font(name='Arial', size=9, bold=True, color=COR_NIVEL.get(str(val), 'FF555555'))
-            if col == 9:
-                c.number_format = '0.0"%"'
-
-    if row > 3:
-        ws.conditional_formatting.add(f'E3:E{row}', ColorScaleRule(
-            start_type='min', start_color='FFFFFFFF',
-            end_type='max', end_color='FF1F3864'
-        ))
-
-    _auto_width(ws)
-    ws.column_dimensions['A'].width = 10
-    ws.column_dimensions['B'].width = 16
-    ws.column_dimensions['C'].width = 24
-    ws.column_dimensions['D'].width = 22
-
-
-def _criar_aba_comparativo(wb: Workbook, df: pd.DataFrame):
-    ws = wb.create_sheet('Comparativo BR vs EUA')
-    ws.freeze_panes = 'A3'
-
-    ws.merge_cells('A1:H1')
-    t = ws['A1']
-    t.value = '🆚 Comparativo BR vs EUA — Demanda por Tecnologia (todos os níveis)'
-    t.font = Font(name='Arial', bold=True, size=13, color='FFFFFFFF')
-    t.fill = PatternFill('solid', start_color='FF1F3864')
-    t.alignment = Alignment(horizontal='center', vertical='center')
-    ws.row_dimensions[1].height = 28
-
-    pivot = (
-        df.groupby(['Categoria', 'Tecnologia', 'País'])['Total']
-        .sum()
-        .unstack('País')
-        .fillna(0)
-        .astype(int)
-        .reset_index()
-    )
-    paises = [c for c in pivot.columns if c not in ('Categoria', 'Tecnologia')]
-    pivot['Total Geral'] = pivot[paises].sum(axis=1)
-    pivot = pivot.sort_values(['Categoria', 'Total Geral'], ascending=[True, False])
-
-    headers = ['Categoria', 'Tecnologia'] + paises + ['Total Geral']
-    for col, h in enumerate(headers, 1):
-        c = ws.cell(row=2, column=col, value=h)
-        _header_style(c)
-    ws.row_dimensions[2].height = 22
-
-    for row, (_, r) in enumerate(pivot.iterrows(), start=3):
-        alt = (row % 2 == 0)
-        vals = [r['Categoria'], r['Tecnologia']] + [r[p] for p in paises] + [r['Total Geral']]
+    df_sorted = df_country.sort_values(['Level', 'Category', 'Total'], ascending=[True, True, False])
+    row_idx = 3
+    for _, row in df_sorted.iterrows():
+        alt = (row_idx % 2 == 0)
+        vals = [row['Level'], row['Category'], row['Technology'], row['Total'], row['Remote'], row['Hybrid'], row['On-site'], row['% Remote'], '']
         for col, val in enumerate(vals, 1):
-            c = ws.cell(row=row, column=col, value=val)
-            _data_style(c, alt=alt, align='left' if col <= 2 else 'center')
-            if col == len(vals):
-                c.font = Font(name='Arial', size=9, bold=True)
+            cell = ws.cell(row=row_idx, column=col, value=val)
+            _data_style(cell, alt=alt, align='left' if col in (1, 2, 3) else 'center')
+            if col == 1: cell.font = Font(name='Arial', size=9, bold=True, color=LEVEL_COLORS.get(row['Level'], 'FF555555'))
+            if col == 8: cell.number_format = '0.0"%"'
+        row_idx += 1
 
-    if row > 3:
-        n_paises = len(paises)
-        ws.conditional_formatting.add(f'C3:C{row}', ColorScaleRule(
-            start_type='min', start_color='FFFFFFFF', end_type='max', end_color='FF1A5276'
-        ))
-        if n_paises > 1:
-            ws.conditional_formatting.add(f'D3:D{row}', ColorScaleRule(
-                start_type='min', start_color='FFFFFFFF', end_type='max', end_color='FF1A5276'
-            ))
+    row_idx = 3
+    for _, row in df_sorted.iterrows():
+        subset = df_sorted[(df_sorted['Level'] == row['Level']) & (df_sorted['Category'] == row['Category'])]
+        rank = list(subset['Technology']).index(row['Technology']) + 1
+        _data_style(ws.cell(row=row_idx, column=9, value=f"#{rank}"), alt=(row_idx % 2 == 0))
+        row_idx += 1
 
+    if row_idx > 3:
+        ws.conditional_formatting.add(f'D3:D{row_idx-1}', ColorScaleRule(start_type='min', start_color='FFFFFFFF', end_type='max', end_color='FF1F3864'))
     _auto_width(ws)
-    ws.column_dimensions['A'].width = 26
-    ws.column_dimensions['B'].width = 22
+    ws.column_dimensions['A'].width, ws.column_dimensions['B'].width, ws.column_dimensions['C'].width = 16, 24, 22
 
+def _create_all_data_sheet(wb: Workbook, df: pd.DataFrame):
+    ws = wb.create_sheet('All Data', 0)
+    ws.freeze_panes = 'A3'
+    ws.merge_cells('A1:J1')
+    title_cell = ws['A1']
+    title_cell.value, title_cell.font, title_cell.fill = 'Complete Analysis — Brazil + USA', Font(name='Arial', bold=True, size=13, color='FFFFFFFF'), PatternFill('solid', start_color='FF1F3864')
+    title_cell.alignment = Alignment(horizontal='center', vertical='center')
+    ws.row_dimensions[1].height = 28
 
-def _criar_aba_resumo(wb: Workbook, df: pd.DataFrame, dist_por_pais: dict):
-    ws = wb.create_sheet('Resumo Executivo', 0)
+    headers = ['Country', 'Level', 'Category', 'Technology', 'Total', 'Remote', 'Hybrid', 'On-site', '% Remote']
+    for col, header in enumerate(headers, 1): _header_style(ws.cell(row=2, column=col, value=header))
+    ws.row_dimensions[2].height = 22
 
+    df_sorted = df.sort_values(['Country', 'Level', 'Category', 'Total'], ascending=[True, True, True, False])
+    row_idx = 3
+    for _, row in df_sorted.iterrows():
+        alt = (row_idx % 2 == 0)
+        for col, val in enumerate([row['Country'], row['Level'], row['Category'], row['Technology'], row['Total'], row['Remote'], row['Hybrid'], row['On-site'], row['% Remote']], 1):
+            cell = ws.cell(row=row_idx, column=col, value=val)
+            _data_style(cell, alt=alt, align='left' if col <= 4 else 'center')
+            if col == 2: cell.font = Font(name='Arial', size=9, bold=True, color=LEVEL_COLORS.get(str(val), 'FF555555'))
+            if col == 9: cell.number_format = '0.0"%"'
+        row_idx += 1
+
+    if row_idx > 3:
+        ws.conditional_formatting.add(f'E3:E{row_idx-1}', ColorScaleRule(start_type='min', start_color='FFFFFFFF', end_type='max', end_color='FF1F3864'))
+    _auto_width(ws)
+    ws.column_dimensions['A'].width, ws.column_dimensions['B'].width, ws.column_dimensions['C'].width, ws.column_dimensions['D'].width = 10, 16, 24, 22
+
+def _create_comparison_sheet(wb: Workbook, df: pd.DataFrame):
+    ws = wb.create_sheet('Comparison BR vs USA')
+    ws.freeze_panes = 'A3'
+    ws.merge_cells('A1:H1')
+    title_cell = ws['A1']
+    title_cell.value, title_cell.font, title_cell.fill = 'Comparison BR vs USA', Font(name='Arial', bold=True, size=13, color='FFFFFFFF'), PatternFill('solid', start_color='FF1F3864')
+    title_cell.alignment = Alignment(horizontal='center', vertical='center')
+    ws.row_dimensions[1].height = 28
+
+    pivot = df.groupby(['Category', 'Technology', 'Country'])['Total'].sum().unstack('Country').fillna(0).astype(int).reset_index()
+    countries = [col for col in pivot.columns if col not in ('Category', 'Technology')]
+    pivot['Grand Total'] = pivot[countries].sum(axis=1)
+    pivot = pivot.sort_values(['Category', 'Grand Total'], ascending=[True, False])
+
+    headers = ['Category', 'Technology'] + countries + ['Grand Total']
+    for col, header in enumerate(headers, 1): _header_style(ws.cell(row=2, column=col, value=header))
+    ws.row_dimensions[2].height = 22
+
+    row_idx = 3
+    for _, row in pivot.iterrows():
+        vals = [row['Category'], row['Technology']] + [row[p] for p in countries] + [row['Grand Total']]
+        for col, val in enumerate(vals, 1):
+            cell = ws.cell(row=row_idx, column=col, value=val)
+            _data_style(cell, alt=(row_idx % 2 == 0), align='left' if col <= 2 else 'center')
+            if col == len(vals): cell.font = Font(name='Arial', size=9, bold=True)
+        row_idx += 1
+
+    if row_idx > 3:
+        ws.conditional_formatting.add(f'C3:C{row_idx-1}', ColorScaleRule(start_type='min', start_color='FFFFFFFF', end_type='max', end_color='FF1A5276'))
+        if len(countries) > 1: ws.conditional_formatting.add(f'D3:D{row_idx-1}', ColorScaleRule(start_type='min', start_color='FFFFFFFF', end_type='max', end_color='FF1A5276'))
+    _auto_width(ws)
+    ws.column_dimensions['A'].width, ws.column_dimensions['B'].width = 26, 22
+
+def _create_executive_summary_sheet(wb: Workbook, df: pd.DataFrame, distribution_by_country: dict):
+    ws = wb.create_sheet('Executive Summary', 0)
     ws.merge_cells('A1:F1')
-    t = ws['A1']
-    t.value = '📈 Resumo Executivo — Panorama de Mercado Tech'
-    t.font = Font(name='Arial', bold=True, size=14, color='FFFFFFFF')
-    t.fill = PatternFill('solid', start_color='FF1F3864')
-    t.alignment = Alignment(horizontal='center', vertical='center')
+    title_cell = ws['A1']
+    title_cell.value, title_cell.font, title_cell.fill = 'Tech Market Overview', Font(name='Arial', bold=True, size=14, color='FFFFFFFF'), PatternFill('solid', start_color='FF1F3864')
+    title_cell.alignment = Alignment(horizontal='center', vertical='center')
     ws.row_dimensions[1].height = 32
 
-    row = 3
-    for country, cfg in PAISES.items():
-        nome = cfg['nome']
-        dist = dist_por_pais.get(nome, {})
+    row_idx = 3
+    for country, cfg in COUNTRIES.items():
+        name, dist = cfg['name'], distribution_by_country.get(cfg['name'], {})
         total = sum(dist.values())
+        ws.merge_cells(f'A{row_idx}:F{row_idx}')
+        cell = ws.cell(row=row_idx, column=1, value=f'{name} — {total} collected jobs')
+        cell.font, cell.fill = Font(name='Arial', bold=True, size=11, color='FFFFFFFF'), PatternFill('solid', start_color='FF2E75B6')
+        cell.alignment = Alignment(horizontal='left', vertical='center', indent=1)
+        ws.row_dimensions[row_idx].height = 22
+        row_idx += 1
 
-        # Título do país
-        ws.merge_cells(f'A{row}:F{row}')
-        c = ws.cell(row=row, column=1, value=f'🌎 {nome} — {total} vagas coletadas')
-        c.font = Font(name='Arial', bold=True, size=11, color='FFFFFFFF')
-        c.fill = PatternFill('solid', start_color='FF2E75B6')
-        c.alignment = Alignment(horizontal='left', vertical='center', indent=1)
-        ws.row_dimensions[row].height = 22
-        row += 1
+        for level in ['Senior', 'Mid-level', 'General', 'Junior', 'Internship']:
+            qty = dist.get(level, 0)
+            pct = qty / total * 100 if total else 0
+            for col, val in enumerate([level, qty, f'{pct:.1f}%'], 1):
+                cell = ws.cell(row=row_idx, column=col, value=val)
+                _data_style(cell, alt=(row_idx % 2 == 0), align='left' if col == 1 else 'center')
+                if col == 1: cell.font = Font(name='Arial', size=9, bold=True, color=LEVEL_COLORS.get(level, 'FF333333'))
+            row_idx += 1
+        row_idx += 1
 
-        # Distribuição por nível
-        for nivel in ['Sênior', 'Pleno', 'Geral', 'Junior', 'Estágio/Intern']:
-            qtd = dist.get(nivel, 0)
-            pct = qtd / total * 100 if total else 0
-            alt = (row % 2 == 0)
-            for col, val in enumerate([nivel, qtd, f'{pct:.1f}%'], 1):
-                c = ws.cell(row=row, column=col, value=val)
-                _data_style(c, alt=alt, align='left' if col == 1 else 'center')
-                if col == 1:
-                    c.font = Font(name='Arial', size=9, bold=True, color=COR_NIVEL.get(nivel, 'FF333333'))
-            row += 1
-        row += 1
-
-    # Top 10 geral por país
-    row += 1
-    ws.merge_cells(f'A{row}:F{row}')
-    c = ws.cell(row=row, column=1, value='🏆 Top 10 Tecnologias por País (todos os níveis)')
-    c.font = Font(name='Arial', bold=True, size=11, color='FFFFFFFF')
-    c.fill = PatternFill('solid', start_color='FF1F3864')
-    c.alignment = Alignment(horizontal='center', vertical='center')
-    ws.row_dimensions[row].height = 22
-    row += 1
+    row_idx += 1
+    ws.merge_cells(f'A{row_idx}:F{row_idx}')
+    cell = ws.cell(row=row_idx, column=1, value='Top 10 Technologies per Country')
+    cell.font, cell.fill, cell.alignment = Font(name='Arial', bold=True, size=11, color='FFFFFFFF'), PatternFill('solid', start_color='FF1F3864'), Alignment(horizontal='center', vertical='center')
+    ws.row_dimensions[row_idx].height = 22
+    row_idx += 1
 
     col_offset = 1
-    for cfg in PAISES.values():
-        nome = cfg['nome']
-        top10 = (
-            df[df['País'] == nome]
-            .groupby('Tecnologia')['Total']
-            .sum()
-            .nlargest(10)
-            .reset_index()
-        )
-        ws.cell(row=row, column=col_offset, value=nome).font = Font(name='Arial', bold=True, size=10)
-        ws.cell(row=row, column=col_offset+1, value='Vagas').font = Font(name='Arial', bold=True, size=10)
-        for i, (_, r) in enumerate(top10.iterrows(), start=1):
-            ws.cell(row=row+i, column=col_offset, value=r['Tecnologia'])
-            ws.cell(row=row+i, column=col_offset+1, value=r['Total'])
+    for cfg in COUNTRIES.values():
+        name = cfg['name']
+        top10 = df[df['Country'] == name].groupby('Technology')['Total'].sum().nlargest(10).reset_index()
+        ws.cell(row=row_idx, column=col_offset, value=name).font = Font(name='Arial', bold=True, size=10)
+        ws.cell(row=row_idx, column=col_offset+1, value='Jobs').font = Font(name='Arial', bold=True, size=10)
+        for i, (_, row) in enumerate(top10.iterrows(), start=1):
+            ws.cell(row=row_idx+i, column=col_offset, value=row['Technology'])
+            ws.cell(row=row_idx+i, column=col_offset+1, value=row['Total'])
         col_offset += 3
-
     _auto_width(ws)
 
-
-def exportar_excel(df: pd.DataFrame, nome_arquivo: str, dist_por_pais: dict) -> None:
+def export_to_excel(df: pd.DataFrame, filename: str, distribution_by_country: dict) -> None:
     wb = Workbook()
-    # Remove aba padrão
-    if 'Sheet' in wb.sheetnames:
-        del wb['Sheet']
-
-    _criar_aba_resumo(wb, df, dist_por_pais)
-    _criar_aba_todos(wb, df)
-
-    for country, cfg in PAISES.items():
-        nome_pais = cfg['nome']
-        df_pais = df[df['País'] == nome_pais]
-        if not df_pais.empty:
-            _criar_aba_pais(wb, df_pais, nome_pais)
-
-    _criar_aba_comparativo(wb, df)
-
-    wb.save(nome_arquivo)
-    print(f"\n✅  Arquivo exportado: {nome_arquivo}")
-    abas = ' | '.join(wb.sheetnames)
-    print(f"   Abas: {abas}")
+    if 'Sheet' in wb.sheetnames: del wb['Sheet']
+    _create_executive_summary_sheet(wb, df, distribution_by_country)
+    _create_all_data_sheet(wb, df)
+    for country, cfg in COUNTRIES.items():
+        df_country = df[df['Country'] == cfg['name']]
+        if not df_country.empty: _create_country_sheet(wb, df_country, cfg['name'])
+    _create_comparison_sheet(wb, df)
+    wb.save(filename)
+    print(f"\n[+] File exported: {filename}\n    Sheets: {' | '.join(wb.sheetnames)}")
 
 # ==========================================
 # 9. Main
 # ==========================================
-def analisar_texto_vagas() -> None:
+def analyze_job_market() -> None:
     print("=" * 60)
-    print("🚀  EXTRAÇÃO AVANÇADA DE VAGAS — BR + EUA  🚀")
+    print("ADVANCED JOB EXTRACTION — BR + USA")
+    print(f"Global limit: {JOB_LIMIT:,} unique jobs")
     print("=" * 60)
 
-    todos_dados: list[dict] = []
-    dist_por_pais: dict[str, dict] = {}
+    all_data: list[dict] = []
+    distribution_by_country: dict[str, dict] = {}
+    global_jobs: dict[str, dict] = {}
 
-    for country, cfg in PAISES.items():
-        print(f"\n\n{'─'*60}")
-        print(f"🌎  Coletando vagas: {cfg['nome']} ({country.upper()})")
-        print(f"{'─'*60}")
+    for country, cfg in COUNTRIES.items():
+        if len(global_jobs) >= JOB_LIMIT:
+            print(f"\n[!] Limit reached. Skipping {cfg['name']}.")
+            break
 
-        vagas = obter_vagas_pais(country, cfg['termos'])
-        dados, dist = processar_pais(country, vagas)
-        todos_dados.extend(dados)
-        dist_por_pais[cfg['nome']] = dist
+        print(f"\n\n{'─'*60}\nCollecting jobs: {cfg['name']} ({country.upper()})\nGlobal jobs: {len(global_jobs):,} / {JOB_LIMIT:,}\n{'─'*60}")
+        country_jobs = get_country_jobs(country, cfg['terms'], global_jobs)
+        data, distribution = process_country(country, country_jobs)
+        all_data.extend(data)
+        distribution_by_country[cfg['name']] = distribution
 
-        total = sum(dist.values())
-        print(f"\n📊 Distribuição por nível — {cfg['nome']}:")
-        for nivel, qtd in sorted(dist.items(), key=lambda x: -x[1]):
-            pct = qtd / total * 100 if total else 0
-            print(f"   {nivel:<20} {qtd:>4} vagas ({pct:.1f}%)")
+        total = sum(distribution.values())
+        print(f"\nDistribution by level — {cfg['name']}:")
+        for level, qty in sorted(distribution.items(), key=lambda x: -x[1]):
+            print(f"   {level:<20} {qty:>6,} jobs ({(qty/total*100 if total else 0):.1f}%)")
 
-    df = pd.DataFrame(todos_dados)
+    print(f"\n{'='*60}\nTotal globally collected: {len(global_jobs):,} unique jobs\n{'='*60}")
+
+    df = pd.DataFrame(all_data)
     if df.empty:
-        print("\nNenhum dado encontrado.")
+        print("\nNo data found.")
         return
 
-    for cfg in PAISES.values():
-        imprimir_relatorio(df, cfg['nome'])
-
-    exportar_excel(df, 'analise_mercado_br_eua.xlsx', dist_por_pais)
-
+    for cfg in COUNTRIES.values():
+        print_report(df, cfg['name'])
+    export_to_excel(df, 'market_analysis_br_usa.xlsx', distribution_by_country)
 
 if __name__ == "__main__":
-    analisar_texto_vagas()
+    analyze_job_market()
