@@ -1,7 +1,6 @@
 env-vagas
 .env
 __pycache__
-all_hits_raw_dump.csv
-grupo.txt
-linkedin.txt
+posts
 raw_api_responses.json
+raw_jobs_processed.csv
